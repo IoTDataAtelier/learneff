@@ -7,7 +7,7 @@ from scripts.graph_generation import generate_graphs
 
 
 # ---- Global config ----
-D = 10            # number of features
+D = 10           # number of features
 N = 100          # number of samples
 T = 100          # number of epochs
 LR = 0.01        # learning rate
