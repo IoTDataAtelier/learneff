@@ -7,11 +7,11 @@ from scripts.graph_generation import generate_graphs
 
 
 # ---- Global config ----
-D = 200          # number of features
+D = 10            # number of features
 N = 100          # number of samples
 T = 100          # number of epochs
-LR = 0.05        # learning rate
-NOISE = 0.9      # noise level
+LR = 0.01        # learning rate
+NOISE = 0.7      # noise level
 S_W = 10         # sliding window size for graphs
 M = 5            # stride between windows
 # -----------------------
@@ -50,10 +50,10 @@ def run_pipeline():
     ]
 
     for index, (step_name, step_action) in enumerate(pipeline_steps):
-        success(f"\nExecuting step {index + 1}: {step_name}")
+        success(f"Executing step {index + 1}: {step_name}\n")
         step_action()
 
-    success(f"Pipeline execution completed successfully. Results stored in: {output_path}")
+    success(f"\nPipeline execution completed successfully. Results stored in: {output_path}")
 
 
 if __name__ == "__main__":
