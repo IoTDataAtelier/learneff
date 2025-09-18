@@ -1,0 +1,5 @@
+numpy~=2.3.3
+fastavro~=1.12.0
+matplotlib~=3.10.6
+networkx~=3.5
+scikit-learn~=1.7.2
