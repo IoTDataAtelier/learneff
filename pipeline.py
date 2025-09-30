@@ -4,6 +4,7 @@ from lib.logger import success
 from scripts.synthetic_data_generation import synthetic_data_generation
 from scripts.training_process import training_process
 from scripts.graph_generation import generate_graphs
+from classes.data_generation import MultivariateGaussian
 
 
 # ---- Global config ----
@@ -31,7 +32,7 @@ def run_pipeline():
             lambda: (
                 state.update(dict(zip(
                     ["filepath", "w_true"],
-                    synthetic_data_generation(output_path, N=N, D=D, noise=NOISE)))
+                    synthetic_data_generation(output_path, f_theta=MultivariateGaussian(), N=N, D=D, noise=NOISE)))
                 )
             ),
         ),

@@ -12,6 +12,20 @@ def pearson_corr(x: np.ndarray, y: np.ndarray) -> float:
     return np.corrcoef(x, y)[0, 1]
 
 
+def q(G: nx.graph, D: int, W: np.ndarray, t: int, e: int):
+    # Add nodes (weights/features)
+    for i in range(D):
+        G.add_node(i)
+
+    # Add edges based on correlation
+    for i in range(D):
+        for j in range(i + 1, D):
+            corr = pearson_corr(W[i, t:e], W[j, t:e])
+            if abs(corr) > 0.5:
+                G.add_edge(i, j, weight=corr)
+
+    return G
+
 def generate_graphs(W: np.ndarray, output_path: str, S_w: int = 10, M: int = 5):
     D, E = W.shape
     graphs = []
@@ -20,16 +34,7 @@ def generate_graphs(W: np.ndarray, output_path: str, S_w: int = 10, M: int = 5):
         e = t + S_w
         G = nx.Graph()
 
-        # Add nodes (weights/features)
-        for i in range(D):
-            G.add_node(i)
-
-        # Add edges based on correlation
-        for i in range(D):
-            for j in range(i + 1, D):
-                corr = pearson_corr(W[i, t:e], W[j, t:e])
-                if abs(corr) > 0.5:
-                    G.add_edge(i, j, weight=corr)
+        G = q(G, D, W)
 
         graphs.append(G)
 
