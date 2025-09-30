@@ -17,12 +17,12 @@ class MultivariateGaussian(DataGenerationStrategy):
         D = kwargs['D']
         N = kwargs['N']
 
-        mean = st.norm.rvs(D)
+        mean = np.array(st.norm.rvs(size = D)).T
         cov = np.eye(D)      
 
         print(cov)
 
-        mn = st.multivariate_normal(mean, cov, seed = 1)
+        mn = st.multivariate_normal(mean = mean, cov = cov, seed = 1)
         M = mn.rvs(N)
         #ones = np.ones((N, 1))
         #X = np.column_stack([ones, M])

@@ -34,7 +34,7 @@ def generate_graphs(W: np.ndarray, output_path: str, S_w: int = 10, M: int = 5):
         e = t + S_w
         G = nx.Graph()
 
-        G = q(G, D, W)
+        G = q(G, D, W, t, e)
 
         graphs.append(G)
 

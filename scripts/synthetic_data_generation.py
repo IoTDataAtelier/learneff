@@ -1,14 +1,16 @@
 import numpy as np
 from lib.functions import save_dataset_avro
 from classes.data_generation import DataGenerationStrategy
+import scipy.stats as st
 
 #def f_theta(N: int, D: int) -> np.ndarray:
 #    return np.random.randn(N, D)
 
 
 def r_omega(D: int) -> np.ndarray:
-    return np.random.randn(D, 1)
-
+    #return np.random.randn(D, 1)
+    v = np.array(st.norm.rvs(size = D)).T
+    return v.reshape(-1, 1)
 
 def g_lambda(X: np.ndarray, w: np.ndarray, noise_level: float = 0.1) -> np.ndarray:
     noise = noise_level * np.random.randn(X.shape[0], 1)
