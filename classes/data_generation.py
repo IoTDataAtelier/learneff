@@ -41,3 +41,13 @@ class RandomColumnVector(DataGenerationStrategy):
         w = np.array(st.norm.rvs(size = D)).T
         w = w.reshape(-1, 1)
         return w
+    
+class LinearPlusNoise(DataGenerationStrategy):
+
+    def gen(self, **kwargs):
+        X = kwargs['X']
+        w = kwargs['w']
+        noise_level = kwargs['noise_level']
+
+        noise = noise_level * np.random.randn(X.shape[0], 1)
+        return X @ w + noise
