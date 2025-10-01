@@ -32,3 +32,12 @@ class LegendrePolynomials(DataGenerationStrategy):
 
     def gen(self, **kwargs):
         pass
+
+class RandomColumnVector(DataGenerationStrategy):
+
+    def gen(self, **kwargs):
+        D = kwargs['D']
+        
+        w = np.array(st.norm.rvs(size = D)).T
+        w = w.reshape(-1, 1)
+        return w
