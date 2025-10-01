@@ -27,3 +27,8 @@ class MultivariateGaussian(DataGenerationStrategy):
         #ones = np.ones((N, 1))
         #X = np.column_stack([ones, M])
         return M
+    
+class LegendrePolynomials(DataGenerationStrategy):
+
+    def gen(self, **kwargs):
+        pass

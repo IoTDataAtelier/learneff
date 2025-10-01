@@ -1,7 +1,7 @@
 import numpy as np
 import os
 from sklearn.model_selection import train_test_split
-
+import scipy.stats as st
 
 def mean_squared_error(y_true, y_pred):
     return np.mean((y_true - y_pred) ** 2)
@@ -30,7 +30,8 @@ def training_process(output_path: str, filepath: str, D: int, T: int, lr: float 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # --- Initialize weights ---
-    w = np.random.randn(D, 1)
+    w = np.array(st.norm.rvs(size = D)).T
+    w = w.reshape(-1, 1)
 
     W = np.zeros((D, T))
     e_train = np.zeros(T)
