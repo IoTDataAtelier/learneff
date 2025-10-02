@@ -20,8 +20,6 @@ class MultivariateGaussian(DataGenerationStrategy):
         mean = np.array(st.norm.rvs(size = D)).T
         cov = np.eye(D)      
 
-        print(cov)
-
         mn = st.multivariate_normal(mean = mean, cov = cov, seed = 1)
         M = mn.rvs(N)
         #ones = np.ones((N, 1))
