@@ -6,6 +6,7 @@ from scripts.training_process import training_process
 from scripts.graph_generation import generate_graphs
 from classes.data_generation import MultivariateGaussian, RandomColumnVector, LinearPlusNoise
 from classes.error_function import MeanSquaredError
+from classes.model import Linear
 
 
 # ---- Global config ----
@@ -41,7 +42,7 @@ def run_pipeline():
             "Training Process",
             lambda: state.update(
                 W=training_process(
-                    output_path, filepath=state["filepath"], D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError()
+                    output_path, filepath=state["filepath"], D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear()
                 )
             ),
         ),

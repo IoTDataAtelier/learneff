@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import scipy.stats as st
 import numpy as np
 
 class ErrorFunctionStrategy(ABC):
