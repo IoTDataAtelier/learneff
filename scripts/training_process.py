@@ -9,6 +9,17 @@ from classes.model import ModelStrategy
 #def mean_squared_error(y_true, y_pred):
 #    return np.mean((y_true - y_pred) ** 2)
 
+def error_train_test(y_train, y_test, y_pred, y_pred_test, e_phi: ErrorFunctionStrategy):
+    e_train = e_phi.eval(y_true = y_train, y_pred = y_pred)
+    e_test = e_phi.eval(y_true = y_test, y_pred = y_pred_test)
+
+    return (e_train, e_test)
+
+def pred_train_test(X_train, X_test, w, H: ModelStrategy):
+    y_pred = H.pred(X = X_train, w = w)
+    y_pred_test = H.pred(X = X_test, w = w)
+
+    return (y_pred, y_pred_test)
 
 def training_process(output_path: str, 
                     filepath: str, D: int, T: int, 
@@ -45,11 +56,9 @@ def training_process(output_path: str,
     e_test = np.zeros(T)
 
     # --- Initial error ---
-    y_pred = H.pred(X = X_train, w = w)
-    y_pred_test = H.pred(X = X_test, w = w)
+    y_pred, y_pred_test = pred_train_test(X_train, X_test, w, H)
 
-    e_train[0] = e_phi.eval(y_true = y_train, y_pred = y_pred)
-    e_test[0] = e_phi.eval(y_true = y_test, y_pred = y_pred_test)
+    e_train[0], e_test[0] = error_train_test(y_train, y_test, y_pred, y_pred_test, e_phi)
 
     # --- Store initial weights ---
     W[:, 0] = w.flatten()
@@ -60,12 +69,10 @@ def training_process(output_path: str,
         w -= lr * grad
 
         # Predictions
-        y_pred = H.pred(X = X_train, w = w)
-        y_pred_test = H.pred(X = X_test, w = w)
+        y_pred, y_pred_test = pred_train_test(X_train, X_test, w, H)
 
         # Errors
-        e_train[t] = e_phi.eval(y_true = y_train, y_pred = y_pred)
-        e_test[t] = e_phi.eval(y_true = y_test, y_pred = y_pred_test)
+        e_train[t], e_test[t] = error_train_test(y_train, y_test, y_pred, y_pred_test, e_phi)
 
         # Store weights
         W[:, t] = w.flatten()
