@@ -5,6 +5,7 @@ import scipy.stats as st
 from classes.data_generation import DataGenerationStrategy
 from classes.error_function import ErrorFunctionStrategy
 from classes.model import ModelStrategy
+from classes.algorithm import AlgorithmStrategy
 
 #def mean_squared_error(y_true, y_pred):
 #    return np.mean((y_true - y_pred) ** 2)
@@ -25,7 +26,8 @@ def training_process(output_path: str,
                     filepath: str, D: int, T: int, 
                     r_omega: DataGenerationStrategy, 
                     e_phi: ErrorFunctionStrategy, 
-                    H: ModelStrategy, lr: float = 0.05):
+                    H: ModelStrategy, 
+                    a: AlgorithmStrategy, lr: float = 0.05):
     """
     Training process for synthetic dataset.
     Saves weights, training error, and test error over time.
@@ -64,9 +66,8 @@ def training_process(output_path: str,
     W[:, 0] = w.flatten()
 
     for t in range(1, T):
-        # Gradient descent update
-        grad = -(2 / len(X_train)) * X_train.T @ (y_train - y_pred)
-        w -= lr * grad
+        # Weight update
+        w = a.update(w = w, X = X_train, y = y_train, lr = lr)
 
         # Predictions
         y_pred, y_pred_test = pred_train_test(X_train, X_test, w, H)
