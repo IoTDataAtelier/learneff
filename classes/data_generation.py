@@ -1,8 +1,9 @@
-from abc import ABC, abstractmethod
+from classes.base_class import BaseClass
+from abc import abstractmethod
 import scipy.stats as st
 import numpy as np
 
-class DataGenerationStrategy(ABC):
+class DataGenerationStrategy(BaseClass):
 
     @abstractmethod
     def gen(self, **kwargs):
@@ -10,10 +11,6 @@ class DataGenerationStrategy(ABC):
         Generating data according to a set of parameters
         """
         pass
-
-    def set_attributes(self, attr: dict):
-        for k, v in attr.items():
-            setattr(self, k, v)
 
 class MultivariateGaussian(DataGenerationStrategy):
 

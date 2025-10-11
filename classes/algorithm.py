@@ -1,7 +1,8 @@
-from abc import ABC, abstractmethod
+from classes.base_class import BaseClass
+from abc import abstractmethod
 import numpy as np
 
-class AlgorithmStrategy(ABC):
+class AlgorithmStrategy(BaseClass):
 
     @abstractmethod
     def update(self, **kwargs):
@@ -9,10 +10,6 @@ class AlgorithmStrategy(ABC):
         Generating new values for w
         """
         pass
-
-    def set_attributes(self, attr: dict):
-        for k, v in attr.items():
-            setattr(self, k, v)
 
 class NewtonPLA(AlgorithmStrategy):
 

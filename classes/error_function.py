@@ -1,7 +1,8 @@
-from abc import ABC, abstractmethod
+from classes.base_class import BaseClass
+from abc import abstractmethod
 import numpy as np
 
-class ErrorFunctionStrategy(ABC):
+class ErrorFunctionStrategy(BaseClass):
 
     @abstractmethod
     def eval(self, **kwargs):
@@ -9,10 +10,6 @@ class ErrorFunctionStrategy(ABC):
         Calculate the error based on a set of parameters
         """
         pass
-
-    def set_attributes(self, attr: dict):
-        for k, v in attr.items():
-            setattr(self, k, v)
 
 class MeanSquaredError(ErrorFunctionStrategy):
 
