@@ -10,10 +10,13 @@ class ModelStrategy(ABC):
         """
         pass
 
+    def set_attributes(self, attr: dict):
+        for k, v in attr.items():
+            setattr(self, k, v)
+
 class Linear(ModelStrategy):
 
     def pred(self, **kwargs):
-        X = kwargs['X']
-        w = kwargs['w']
+        self.set_attributes(kwargs)
 
-        return np.dot(X, w)
+        return np.dot(self.X, self.w)

@@ -10,14 +10,14 @@ class AlgorithmStrategy(ABC):
         """
         pass
 
+    def set_attributes(self, attr: dict):
+        for k, v in attr.items():
+            setattr(self, k, v)
+
 class NewtonPLA(AlgorithmStrategy):
 
     def update(self, **kwargs):
+        self.set_attributes(kwargs)
 
-        X = kwargs['X']
-        y = kwargs['y']
-        w = kwargs['w']
-        learning_rate = kwargs['lr']
-
-        wt = (1 - learning_rate) * w + learning_rate * np.linalg.inv(np.dot(X.T, X)) @ np.dot(X.T, y)
+        wt = (1 - self.lr) * self.w + self.lr * np.linalg.inv(np.dot(self.X.T, self.X)) @ np.dot(self.X.T, self.y)
         return wt

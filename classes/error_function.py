@@ -10,10 +10,13 @@ class ErrorFunctionStrategy(ABC):
         """
         pass
 
+    def set_attributes(self, attr: dict):
+        for k, v in attr.items():
+            setattr(self, k, v)
+
 class MeanSquaredError(ErrorFunctionStrategy):
 
     def eval(self, **kwargs):
-        y_true = kwargs['y_true']
-        y_pred = kwargs['y_pred']
+        self.set_attributes(kwargs)
 
-        return np.mean((y_true - y_pred) ** 2)
+        return np.mean((self.y_true - self.y_pred) ** 2)
