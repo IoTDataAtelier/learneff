@@ -1,7 +1,8 @@
-from abc import ABC, abstractmethod
+from classes.base_class import BaseClass
+from abc import abstractmethod
 import numpy as np
 
-class ErrorFunctionStrategy(ABC):
+class ErrorFunctionStrategy(BaseClass):
 
     @abstractmethod
     def eval(self, **kwargs):
@@ -13,7 +14,6 @@ class ErrorFunctionStrategy(ABC):
 class MeanSquaredError(ErrorFunctionStrategy):
 
     def eval(self, **kwargs):
-        y_true = kwargs['y_true']
-        y_pred = kwargs['y_pred']
+        self.set_attributes(kwargs)
 
-        return np.mean((y_true - y_pred) ** 2)
+        return np.mean((self.y_true - self.y_pred) ** 2)

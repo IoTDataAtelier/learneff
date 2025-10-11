@@ -1,8 +1,9 @@
-from abc import ABC, abstractmethod
+from classes.base_class import BaseClass
+from abc import abstractmethod
 import scipy.stats as st
 import numpy as np
 
-class DataGenerationStrategy(ABC):
+class DataGenerationStrategy(BaseClass):
 
     @abstractmethod
     def gen(self, **kwargs):
@@ -14,14 +15,13 @@ class DataGenerationStrategy(ABC):
 class MultivariateGaussian(DataGenerationStrategy):
 
     def gen(self, **kwargs):
-        D = kwargs['D']
-        N = kwargs['N']
+        self.set_attributes(kwargs)
 
-        mean = np.array(st.norm.rvs(size = D)).T
-        cov = np.eye(D)      
+        mean = np.array(st.norm.rvs(size = self.D)).T
+        cov = np.eye(self.D)      
 
         mn = st.multivariate_normal(mean = mean, cov = cov, seed = 1)
-        M = mn.rvs(N)
+        M = mn.rvs(self.N)
         #ones = np.ones((N, 1))
         #X = np.column_stack([ones, M])
         return M
@@ -34,18 +34,16 @@ class LegendrePolynomials(DataGenerationStrategy):
 class RandomColumnVector(DataGenerationStrategy):
 
     def gen(self, **kwargs):
-        D = kwargs['D']
+        self.set_attributes(kwargs)
         
-        w = np.array(st.norm.rvs(size = D)).T
+        w = np.array(st.norm.rvs(size = self.D)).T
         w = w.reshape(-1, 1)
         return w
     
 class LinearPlusNoise(DataGenerationStrategy):
 
     def gen(self, **kwargs):
-        X = kwargs['X']
-        w = kwargs['w']
-        noise_level = kwargs['noise_level']
+        self.set_attributes(kwargs)
 
-        noise = noise_level * np.random.randn(X.shape[0], 1)
-        return X @ w + noise
+        noise = self.noise_level * np.random.randn(self.X.shape[0], 1)
+        return self.X @ self.w + noise

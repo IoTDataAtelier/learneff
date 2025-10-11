@@ -1,7 +1,8 @@
-from abc import ABC, abstractmethod
+from classes.base_class import BaseClass
+from abc import abstractmethod
 import numpy as np
 
-class ModelStrategy(ABC):
+class ModelStrategy(BaseClass):
 
     @abstractmethod
     def pred(self, **kwargs):
@@ -13,7 +14,6 @@ class ModelStrategy(ABC):
 class Linear(ModelStrategy):
 
     def pred(self, **kwargs):
-        X = kwargs['X']
-        w = kwargs['w']
+        self.set_attributes(kwargs)
 
-        return np.dot(X, w)
+        return np.dot(self.X, self.w)
