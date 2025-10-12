@@ -2,6 +2,7 @@ import os
 import numpy as np
 import fastavro
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 import networkx as nx
 
 
@@ -65,7 +66,7 @@ def plot_graph(G, output_path, start_epoch, last_epoch):
     weights = [abs(d['weight']) for _, _, d in edges]
 
     nx.draw_networkx_nodes(G, pos, node_size=300, node_color="skyblue")
-    nx.draw_networkx_edges(G, pos, width=weights)
+    nx.draw_networkx_edges(G, pos, width=weights, edge_color=weights, edge_cmap=cm.coolwarm)
     nx.draw_networkx_labels(G, pos, font_size=8)
 
     plt.title(f"Weight Correlation Graph (epochs {start_epoch}–{last_epoch})")
