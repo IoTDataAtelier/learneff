@@ -76,3 +76,8 @@ def plot_graph(G, output_path, start_epoch, last_epoch):
     fname = os.path.join(output_path, f"graph_{start_epoch}_{last_epoch}.png")
     plt.savefig(fname)
     plt.close()
+
+def pearson_corr(x: np.ndarray, y: np.ndarray) -> float:
+    if np.std(x) == 0 or np.std(y) == 0:
+        return 0.0
+    return np.corrcoef(x, y)[0, 1]

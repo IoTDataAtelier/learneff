@@ -1,14 +1,22 @@
 from datetime import datetime
 import os
 from lib.logger import success
+from lib.functions import pearson_corr
+#from scipy.stats import pearsonr
+
+#---- Experiment Phases ----
 from scripts.synthetic_data_generation import synthetic_data_generation
 from scripts.training_process import training_process
 from scripts.graph_generation import generate_graphs
+# -----------------------
+
+#---- Classes ----
 from classes.data_generation import MultivariateGaussian, RandomColumnVector, LinearPlusNoise
 from classes.error_function import MeanSquaredError
 from classes.model import Linear
 from classes.algorithm import NewtonPLA
-
+from classes.graph_gen import Pairwise
+# -----------------------
 
 # ---- Global config ----
 D = 10           # number of features
@@ -49,7 +57,7 @@ def run_pipeline():
         ),
         (
             "Graph Generation",
-            lambda: generate_graphs(state["W"], output_path, S_w=S_W, M=M),
+            lambda: generate_graphs(state["W"], output_path, q = Pairwise(), corr = pearson_corr, S_w=S_W, M=M),
         ),
     ]
 
