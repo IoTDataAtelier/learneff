@@ -20,7 +20,7 @@ from lib.functions import plot_graph
 #                G.add_edge(i, j, weight=corr)
 #    return G
 
-def generate_graphs(W: np.ndarray, output_path: str, q: GraphGenerationStrategy, corr, S_w: int = 10, M: int = 5, lim: float = 0.5):
+def generate_graphs(W: np.ndarray, output_path: str, q: GraphGenerationStrategy, corr, S_w: int = 10, M: int = 5, min: float = -2):
     D, E = W.shape
     graphs = []
 
@@ -28,7 +28,7 @@ def generate_graphs(W: np.ndarray, output_path: str, q: GraphGenerationStrategy,
         e = t + S_w
         G = nx.Graph()
 
-        G = q.gen(G = G, D = D, Wt = W[:, t:e], lim = lim, corr_op = corr)
+        G = q.gen(G = G, D = D, Wt = W[:, t:e], min = min, corr_op = corr)
 
         graphs.append(G)
 

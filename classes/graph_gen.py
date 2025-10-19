@@ -23,7 +23,7 @@ class Pairwise(GraphGenerationStrategy):
         for i in range(self.D):
             for j in range(i + 1, self.D):
                 corr = self.corr_op(self.Wt[i], self.Wt[j])
-                if abs(corr) > self.lim:
+                if abs(corr) > self.min:
                     self.G.add_edge(i, j, weight=corr)
 
         return self.G
