@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 from classes.graph_gen import GraphGenerationStrategy
 
-from lib.functions import plot_graph
+from lib.functions import plot_graph, save_graph
 
 
 #def q(G: nx.graph, D: int, W: np.ndarray, t: int, e: int):
@@ -34,5 +34,8 @@ def generate_graphs(W: np.ndarray, output_path: str, q: GraphGenerationStrategy,
 
         # --- Plot the graph ---
         plot_graph(G, output_path, t, e)
+
+        # --- Save graph ---
+        save_graph(G, output_path, t, e)
 
     return graphs
