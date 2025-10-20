@@ -35,7 +35,7 @@ def run_pipeline():
     output_path = f"output/{experiment_dir}"
     os.makedirs(output_path, exist_ok=True)
 
-    state = {"filepath": "", "w_true": None, "W": None}
+    state = {"filepath": "", "w_true": None, "W": None, "graphs": None}
 
     pipeline_steps = [
         (
@@ -57,7 +57,10 @@ def run_pipeline():
         ),
         (
             "Graph Generation",
-            lambda: generate_graphs(state["W"], output_path, q = Pairwise(), corr = pearson_corr, S_w=S_W, M=M),
+            lambda: state.update(
+                graphs=generate_graphs(state["W"], output_path, q = Pairwise(), corr = pearson_corr, S_w=S_W, M=M
+                )
+            ),
         ),
     ]
 
