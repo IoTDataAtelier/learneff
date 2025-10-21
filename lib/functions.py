@@ -84,7 +84,7 @@ def plot_graph_heatmap(n_components: np.ndarray, output_path:str, T: int, S_w: i
     x_axis = list(range(0, T - S_w + 1, M))
     y_axis = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
-    im = ax.imshow(n_components)
+    im = ax.imshow(n_components, origin="lower", cmap=cm.jet)
     #ax.set_xticks(x_axis)
     #ax.set_yticks(y_axis)
     #fig.colorbar(im, ax=ax, mappable=cm.ScalarMappable(cmap=cm.rainbow))
