@@ -77,6 +77,13 @@ def plot_graph(G, output_path, start_epoch, last_epoch):
     plt.savefig(fname)
     plt.close()
 
+
+def plot_graph_heatmap(n_components: np.ndarray, output_path:str, T: int, S_w: int, M: int):
+    plt.figure(figsize=(6, 6))
+
+    x_axis = list(range(0, T - S_w + 1, M))
+    
+
 def save_graph(G, output_path, start_epoch, last_epoch):
     fname = os.path.join(output_path, f"graph_{start_epoch}_{last_epoch}.gml")
     nx.write_gml(G, fname)

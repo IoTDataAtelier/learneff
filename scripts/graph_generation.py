@@ -21,10 +21,10 @@ from lib.functions import plot_graph, save_graph
 #    return G
 
 def generate_graphs(W: np.ndarray, output_path: str, q: GraphGenerationStrategy, corr, S_w: int = 10, M: int = 5, min: float = -2):
-    D, E = W.shape
+    D, T = W.shape
     graphs = []
 
-    for t in range(0, E - S_w + 1, M):
+    for t in range(0, T - S_w + 1, M):
         e = t + S_w
         G = nx.Graph()
 
