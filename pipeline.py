@@ -8,6 +8,7 @@ from lib.functions import pearson_corr
 from scripts.synthetic_data_generation import synthetic_data_generation
 from scripts.training_process import training_process
 from scripts.graph_generation import generate_graphs
+from scripts.graph_destruction import graph_edge_destruction
 # -----------------------
 
 #---- Classes ----
@@ -61,6 +62,12 @@ def run_pipeline():
                 graphs=generate_graphs(state["W"], output_path, q = Pairwise(), corr = pearson_corr, S_w=S_W, M=M
                 )
             ),
+        ),
+        (
+            "Graph Edge Destruction",
+            lambda: graph_edge_destruction(
+                G=state["graphs"], output_path=output_path, T=T, S_w=S_W, M=M
+            )
         ),
     ]
 
