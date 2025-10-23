@@ -3,6 +3,7 @@ import numpy as np
 import fastavro
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 import networkx as nx
 
 
@@ -82,12 +83,21 @@ def plot_graph_heatmap(n_components: np.ndarray, output_path:str, T: int, S_w: i
     fig, ax = plt.subplots()
 
     x_axis = list(range(0, T - S_w + 1, M))
-    y_axis = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+    y_axis = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
+    # ---- Adjust colobar size ----
+    divider = make_axes_locatable(ax)
+    ax_cb = divider.append_axes("right", size="5%", pad=0.05)
+    fig.add_axes(ax_cb)
+
+    # ---- Plot heatmap ----
     im = ax.imshow(n_components, origin="lower", cmap=cm.jet)
-    #ax.set_xticks(x_axis)
-    #ax.set_yticks(y_axis)
-    #fig.colorbar(im, ax=ax, mappable=cm.ScalarMappable(cmap=cm.rainbow))
+    ax.set_xticks(list(range(0, len(x_axis))), x_axis)
+    ax.set_yticks(list(range(0, len(y_axis))), y_axis)
+    ax.set_xlabel("Time Window")
+    ax.set_ylabel("Filter")
+
+    fig.colorbar(im, cax=ax_cb)
 
     ax.set_title("Number of Components")
     fig.tight_layout()
