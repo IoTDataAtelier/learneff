@@ -79,7 +79,7 @@ def plot_graph(G, output_path, start_epoch, last_epoch):
     plt.close()
 
 
-def plot_graph_heatmap(n_components: np.ndarray, output_path:str, T: int, S_w: int, M: int):
+def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T: int, S_w: int, M: int):
     fig, ax = plt.subplots()
 
     x_axis = list(range(0, T - S_w + 1, M))

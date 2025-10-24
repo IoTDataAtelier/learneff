@@ -1,7 +1,7 @@
 from datetime import datetime
 import os
 from lib.logger import success
-from lib.functions import pearson_corr
+from lib.functions import pearson_corr, plot_graph_destruction_heatmap
 #from scipy.stats import pearsonr
 
 #---- Experiment Phases ----
@@ -36,7 +36,7 @@ def run_pipeline():
     output_path = f"output/{experiment_dir}"
     os.makedirs(output_path, exist_ok=True)
 
-    state = {"filepath": "", "w_true": None, "W": None, "graphs": None}
+    state = {"filepath": "", "w_true": None, "W": None, "graphs": None, "n_components": None}
 
     pipeline_steps = [
         (
@@ -57,7 +57,7 @@ def run_pipeline():
             ),
         ),
         (
-            "Graph Generation",
+            "Graph Generation and Graph Plot",
             lambda: state.update(
                 graphs=generate_graphs(state["W"], output_path, q = Pairwise(), corr = pearson_corr, S_w=S_W, M=M
                 )
@@ -65,10 +65,17 @@ def run_pipeline():
         ),
         (
             "Graph Edge Destruction",
-            lambda: graph_edge_destruction(
-                G=state["graphs"], output_path=output_path, T=T, S_w=S_W, M=M
-            )
+            lambda: state.update(
+                n_components=graph_edge_destruction(G=state["graphs"], output_path=output_path
+                )
+            ),
         ),
+        (
+            "Plot Graph Destruction Heatmap",
+            lambda: plot_graph_destruction_heatmap(
+                n_components=state["n_components"], output_path=output_path, T=T, S_w=S_W, M=M
+            )
+        )
     ]
 
     for index, (step_name, step_action) in enumerate(pipeline_steps):

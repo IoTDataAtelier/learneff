@@ -1,8 +1,8 @@
 import networkx as nx
 import numpy as np
-from lib.functions import plot_graph_heatmap
+import os
 
-def graph_edge_destruction(G: list, output_path:str, T: int, S_w: int, M: int):
+def graph_edge_destruction(G: list, output_path:str):
     n_components = np.zeros((11, len(G)))
     graph_n = 0
 
@@ -26,5 +26,7 @@ def graph_edge_destruction(G: list, output_path:str, T: int, S_w: int, M: int):
             n_components[int(i/10)][graph_n] = nx.number_connected_components(g)
 
         graph_n += 1
-            
-    plot_graph_heatmap(n_components, output_path, T, S_w, M)
+
+    np.save(os.path.join(output_path, "graph_destruction_components.npy"), n_components)
+    
+    return n_components
