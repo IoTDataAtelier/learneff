@@ -27,4 +27,4 @@ def graph_edge_destruction(G: list, output_path:str, T: int, S_w: int, M: int):
 
         graph_n += 1
             
-        plot_graph_heatmap(n_components, output_path, T, S_w, M)
+    plot_graph_heatmap(n_components, output_path, T, S_w, M)
