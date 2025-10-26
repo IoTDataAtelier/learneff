@@ -4,12 +4,15 @@ import os
 
 def graph_edge_destruction(G: list, output_path:str):
     n_components = np.zeros((11, len(G)))
+    W_sorted = np.zeros(len(G))
     graph_n = 0
+    obtain_weights = lambda e : e[2]["weight"]
 
     for g in G:
-        sort_edges = sorted(g.edges(data=True), key = lambda e : e[2]["weight"])
+        sort_edges = sorted(g.edges(data=True), key = obtain_weights)
+        W_sorted[graph_n] = list(map(obtain_weights, sort_edges))
         n_edges = len(sort_edges)
-        max_edge = sort_edges[n_edges - 1][2]["weight"]
+        max_edge = obtain_weights(sort_edges[n_edges - 1])
 
         cont = 0
         n_components[0][graph_n] = nx.number_connected_components(g)
@@ -17,7 +20,7 @@ def graph_edge_destruction(G: list, output_path:str):
             threshold = max_edge * (i/100)
             
             for j in range(cont, n_edges):
-                if sort_edges[j][2]["weight"] <= threshold:
+                if obtain_weights(sort_edges[j]) <= threshold:
                     u = sort_edges[j][0]
                     v = sort_edges[j][1]
                     g.remove_edge(u, v)
@@ -29,4 +32,4 @@ def graph_edge_destruction(G: list, output_path:str):
 
     np.save(os.path.join(output_path, "graph_destruction_components.npy"), n_components)
     
-    return n_components
+    return n_components, W_sorted
