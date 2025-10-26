@@ -17,14 +17,14 @@ class MultivariateGaussian(DataGenerationStrategy):
     def gen(self, **kwargs):
         self.set_attributes(kwargs)
 
-        mean = np.array(st.norm.rvs(size = self.D)).T
-        cov = np.eye(self.D)      
+        mean = np.array(st.norm.rvs(size = self.D - 1)).T
+        cov = np.eye(self.D - 1)      
 
         mn = st.multivariate_normal(mean = mean, cov = cov, seed = 1)
         M = mn.rvs(self.N)
-        #ones = np.ones((N, 1))
-        #X = np.column_stack([ones, M])
-        return M
+        ones = np.ones((self.N, 1))
+        X = np.column_stack([ones, M])
+        return X
     
 class LegendrePolynomials(DataGenerationStrategy):
 
