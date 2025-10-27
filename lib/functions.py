@@ -105,7 +105,7 @@ def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T:
     fname = os.path.join(output_path, f"graph_heatmap.png")
     fig.savefig(fname)
 
-def plot_AUC(t: int, Wt: np.ndarray, output_path:str):
+def plot_AUC(t: int, Wt: np.ndarray, AUC: float, output_path:str):
     fig, ax = plt.subplots()
 
     n_weights = len(Wt)
@@ -116,8 +116,9 @@ def plot_AUC(t: int, Wt: np.ndarray, output_path:str):
         x[i] = Wt[i][0]
         y[i] = Wt[i][1]
     
-    ax.plot(x, y, color='green', marker='o', linestyle='solid')
+    ax.plot(x, y, color='green', marker='o', linestyle='solid', label=f"AUC = {AUC}")
 
+    ax.legend()
     ax.set_xlabel("Edge Weight")
     ax.set_ylabel("Number of Components")
 
