@@ -80,10 +80,10 @@ def plot_graph(G, output_path, start_epoch, last_epoch):
 
 
 def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T: int, S_w: int, M: int):
-    x_axis = list(range(0, T - S_w + 1, M))
-    y_axis = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+    x_axis = list(range(0, T - S_w + 1, S_w))
+    y_axis = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
 
-    fig, ax = plt.subplots(figsize=(len(x_axis) * 0.4, len(y_axis) * 0.4))
+    fig, ax = plt.subplots(figsize=(len(x_axis) * 0.6, len(y_axis) * 0.8))
 
     # ---- Adjust colobar size ----
     divider = make_axes_locatable(ax)
@@ -92,8 +92,16 @@ def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T:
 
     # ---- Plot heatmap ----
     im = ax.imshow(n_components, origin="lower", cmap=cm.jet)
-    ax.set_xticks(list(range(0, len(x_axis))), x_axis)
-    ax.set_yticks(list(range(0, len(y_axis))), y_axis)
+
+    x_ticks = np.linspace(0, n_components.shape[1] - 1, len(x_axis))
+    y_ticks = np.linspace(0, n_components.shape[0] - 1, len(y_axis))
+
+    ax.set_xticks(x_ticks)
+    ax.set_xticklabels([f"{x}" for x in x_axis])
+
+    ax.set_yticks(y_ticks)
+    ax.set_yticklabels([f"{y}" for y in y_axis])
+
     ax.set_xlabel("Time Window")
     ax.set_ylabel("Filter")
 
