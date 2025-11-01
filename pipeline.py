@@ -1,8 +1,7 @@
 from datetime import datetime
 import os
 from lib.logger import success
-from lib.functions import pearson_corr, plot_graph_destruction_heatmap
-#from scipy.stats import pearsonr
+from lib.functions import plot_graph_destruction_heatmap
 
 #---- Experiment Phases ----
 from scripts.synthetic_data_generation import synthetic_data_generation
@@ -18,6 +17,7 @@ from classes.error_function import MeanSquaredError
 from classes.model import Linear
 from classes.algorithm import NewtonPLA
 from classes.graph_gen import Pairwise
+from classes.weight_association import Pearson, Spearman, Kendall
 # -----------------------
 
 # ---- Global config ----
@@ -60,7 +60,7 @@ def run_pipeline():
         (
             "Graph Generation and Graph Plot",
             lambda: state.update(
-                graphs=generate_graphs(state["W"], output_path, q = Pairwise(), corr = pearson_corr, S_w=S_W, M=M
+                graphs=generate_graphs(state["W"], output_path, q=Pairwise(), corr=Kendall(), S_w=S_W, M=M
                 )
             ),
         ),

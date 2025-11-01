@@ -22,7 +22,7 @@ class Pairwise(GraphGenerationStrategy):
         # Add edges based on correlation
         for i in range(self.D):
             for j in range(i + 1, self.D):
-                corr = self.corr_op(self.Wt[i], self.Wt[j])
+                corr = self.corr_op.eval(x=self.Wt[i], y=self.Wt[j])
                 corr = abs(corr)
                 if corr > self.min:
                     self.G.add_edge(i, j, weight=corr)

@@ -131,8 +131,3 @@ def plot_AUC(t: int, Wt: np.ndarray, AUC: float, output_path:str):
 def save_graph(G, output_path, start_epoch, last_epoch):
     fname = os.path.join(output_path, f"graph_{start_epoch}_{last_epoch}.gml")
     nx.write_gml(G, fname)
-
-def pearson_corr(x: np.ndarray, y: np.ndarray) -> float:
-    if np.std(x) == 0 or np.std(y) == 0:
-        return 0.0
-    return np.corrcoef(x, y)[0, 1]

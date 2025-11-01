@@ -3,6 +3,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import os
 from classes.graph_gen import GraphGenerationStrategy
+from classes.weight_association import AssociationStrategy
 
 from lib.functions import plot_graph, save_graph
 
@@ -20,7 +21,7 @@ from lib.functions import plot_graph, save_graph
 #                G.add_edge(i, j, weight=corr)
 #    return G
 
-def generate_graphs(W: np.ndarray, output_path: str, q: GraphGenerationStrategy, corr, S_w: int = 10, M: int = 5, min: float = -2):
+def generate_graphs(W: np.ndarray, output_path: str, q: GraphGenerationStrategy, corr: AssociationStrategy, S_w: int = 10, M: int = 5, min: float = -2):
     D, T = W.shape
     graphs = []
 
