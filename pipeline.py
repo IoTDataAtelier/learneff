@@ -60,7 +60,7 @@ def run_pipeline():
         (
             "Graph Generation and Graph Plot",
             lambda: state.update(
-                graphs=generate_graphs(state["W"], output_path, q=Pairwise(), corr=Kendall(), S_w=S_W, M=M
+                graphs=generate_graphs(state["W"], output_path, q=Pairwise(), corr=Pearson(), S_w=S_W, M=M
                 )
             ),
         ),
