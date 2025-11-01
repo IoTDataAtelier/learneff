@@ -18,9 +18,9 @@ class MultivariateGaussian(DataGenerationStrategy):
         self.set_attributes(kwargs)
 
         mean = np.array(st.norm.rvs(size = self.D - 1)).T
-        cov = np.eye(self.D - 1)      
+        #cov = np.eye(self.D - 1)      
 
-        mn = st.multivariate_normal(mean = mean, cov = cov, seed = 1)
+        mn = st.multivariate_normal(mean = mean, cov = self.cov, seed = 1)
         M = mn.rvs(self.N)
         ones = np.ones((self.N, 1))
         X = np.column_stack([ones, M])

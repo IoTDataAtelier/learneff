@@ -1,5 +1,6 @@
 from datetime import datetime
 import os
+import numpy as np
 from lib.logger import success
 from lib.functions import plot_graph_destruction_heatmap
 
@@ -28,6 +29,7 @@ LR = 0.01        # learning rate
 NOISE = 0.7      # noise level
 S_W = 10         # sliding window size for graphs
 M = 5            # stride between windows
+COV = np.eye(D-1)
 # -----------------------
 
 
@@ -45,7 +47,7 @@ def run_pipeline():
             lambda: (
                 state.update(dict(zip(
                     ["filepath", "w_true"],
-                    synthetic_data_generation(output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE)))
+                    synthetic_data_generation(output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV)))
                 )
             ),
         ),
