@@ -27,9 +27,13 @@ class Spearman(AssociationStrategy):
     def eval(self, **kwargs):
         self.set_attributes(kwargs)
 
-
+        sr = st.spearmanr(self.x, self.y, axis=1)
+        return sr.statistic
 
 class Kendall(AssociationStrategy):
 
     def eval(self, **kwargs):
         self.set_attributes(kwargs)
+
+        sr = st.kendalltau(self.x, self.y)
+        return sr.statistic

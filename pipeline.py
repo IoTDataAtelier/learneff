@@ -17,7 +17,7 @@ from classes.error_function import MeanSquaredError
 from classes.model import Linear
 from classes.algorithm import NewtonPLA
 from classes.graph_gen import Pairwise
-from classes.weight_association import Pearson
+from classes.weight_association import Pearson, Spearman, Kendall
 # -----------------------
 
 # ---- Global config ----
@@ -60,7 +60,7 @@ def run_pipeline():
         (
             "Graph Generation and Graph Plot",
             lambda: state.update(
-                graphs=generate_graphs(state["W"], output_path, q=Pairwise(), corr=Pearson(), S_w=S_W, M=M
+                graphs=generate_graphs(state["W"], output_path, q=Pairwise(), corr=Kendall(), S_w=S_W, M=M
                 )
             ),
         ),
