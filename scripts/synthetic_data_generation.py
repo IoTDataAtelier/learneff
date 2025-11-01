@@ -21,9 +21,10 @@ def synthetic_data_generation(output_path: str,
                               f_theta: DataGenerationStrategy, 
                               r_omega: DataGenerationStrategy, 
                               g_lambda: DataGenerationStrategy,
+                              cov: np.ndarray,
                               N: int = 200, D: int = 5, noise: float = 0.1
                               ):
-    X = f_theta.gen(N = N, D = D)
+    X = f_theta.gen(N = N, D = D, cov = cov)
     w = r_omega.gen(D = D)
     y = g_lambda.gen(X = X, w = w, noise_level = noise)
 
