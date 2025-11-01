@@ -67,7 +67,7 @@ def plot_graph(G, output_path, start_epoch, last_epoch):
     weights = [abs(d['weight']) for _, _, d in edges]
 
     nx.draw_networkx_nodes(G, pos, node_size=300, node_color="skyblue")
-    nx.draw_networkx_edges(G, pos, width=weights, edge_color=weights, edge_cmap=cm.coolwarm)
+    nx.draw_networkx_edges(G, pos, width=weights, edge_color=weights, edge_cmap=cm.coolwarm, edge_vmin=0, edge_vmax=1)
     nx.draw_networkx_labels(G, pos, font_size=8)
 
     plt.title(f"Weight Correlation Graph (epochs {start_epoch}–{last_epoch})")
@@ -80,10 +80,10 @@ def plot_graph(G, output_path, start_epoch, last_epoch):
 
 
 def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T: int, S_w: int, M: int):
-    fig, ax = plt.subplots()
-
     x_axis = list(range(0, T - S_w + 1, M))
     y_axis = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+
+    fig, ax = plt.subplots(figsize=(len(x_axis) * 0.4, len(y_axis) * 0.4))
 
     # ---- Adjust colobar size ----
     divider = make_axes_locatable(ax)
