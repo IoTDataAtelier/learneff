@@ -11,10 +11,19 @@ class AlgorithmStrategy(BaseClass):
         """
         pass
 
-class NewtonPLA(AlgorithmStrategy):
+class Newton(AlgorithmStrategy):
 
     def update(self, **kwargs):
         self.set_attributes(kwargs)
 
         wt = (1 - self.lr) * self.w + self.lr * np.linalg.inv(np.dot(self.X.T, self.X)) @ np.dot(self.X.T, self.y)
         return wt
+    
+class GradientDescent(AlgorithmStrategy):
+
+    def update(self, **kwargs):
+        self.set_attributes(kwargs)
+
+        grad = -(2 / len(self.X)) * self.X.T @ (self.y - self.y_pred)
+        self.w -= self.lr * grad
+        return self.w

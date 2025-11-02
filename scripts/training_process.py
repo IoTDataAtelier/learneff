@@ -67,7 +67,7 @@ def training_process(output_path: str,
 
     for t in range(1, T):
         # Weight update
-        w = a.update(w = w, X = X_train, y = y_train, lr = lr)
+        w = a.update(w = w, X = X_train, y = y_train, y_pred = y_pred, lr = lr)
 
         # Predictions
         y_pred, y_pred_test = pred_train_test(X_train, X_test, w, H)

@@ -16,7 +16,7 @@ from scripts.components_AUC import graph_components_AUC
 from classes.data_generation import MultivariateGaussian, RandomColumnVector, LinearPlusNoise, RandomRowVector
 from classes.error_function import MeanSquaredError
 from classes.model import Linear
-from classes.algorithm import NewtonPLA
+from classes.algorithm import Newton, GradientDescent
 from classes.graph_gen import Pairwise
 from classes.weight_association import Pearson, Spearman, Kendall
 # -----------------------
@@ -47,7 +47,7 @@ def run_pipeline():
             lambda: (
                 state.update(dict(zip(
                     ["filepath", "w_true"],
-                    synthetic_data_generation(output_path, f_theta=RandomRowVector(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV)))
+                    synthetic_data_generation(output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV)))
                 )
             ),
         ),
@@ -55,14 +55,14 @@ def run_pipeline():
             "Training Process",
             lambda: state.update(
                 W=training_process(
-                    output_path, filepath=state["filepath"], D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = NewtonPLA()
+                    output_path, filepath=state["filepath"], D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent()
                 )
             ),
         ),
         (
             "Graph Generation and Graph Plot",
             lambda: state.update(
-                graphs=generate_graphs(state["W"], output_path, q=Pairwise(), corr=Pearson(), S_w=S_W, M=M
+                graphs=generate_graphs(state["W"], output_path, q=Pairwise(), corr=Kendall(), S_w=S_W, M=M
                 )
             ),
         ),
