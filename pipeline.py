@@ -13,7 +13,7 @@ from scripts.components_AUC import graph_components_AUC
 # -----------------------
 
 #---- Classes ----
-from classes.data_generation import MultivariateGaussian, RandomColumnVector, LinearPlusNoise
+from classes.data_generation import MultivariateGaussian, RandomColumnVector, LinearPlusNoise, RandomRowVector
 from classes.error_function import MeanSquaredError
 from classes.model import Linear
 from classes.algorithm import NewtonPLA
@@ -47,7 +47,7 @@ def run_pipeline():
             lambda: (
                 state.update(dict(zip(
                     ["filepath", "w_true"],
-                    synthetic_data_generation(output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV)))
+                    synthetic_data_generation(output_path, f_theta=RandomRowVector(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV)))
                 )
             ),
         ),
