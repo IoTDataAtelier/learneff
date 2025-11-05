@@ -51,41 +51,41 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def graph_generation(self, output_path: str, q: GraphGenerationStrategy, corr: AssociationStrategy, S_w: int, M: int):
+    def graph_generation(self, output_path: str, q: GraphGenerationStrategy, corr: AssociationStrategy, S_w: int, M: int, graphs_state = "graphs"):
         step = (
             "Graph Generation and Graph Plot",
             lambda: self.state.update(
-                graphs=generate_graphs(self.state["W"], output_path=output_path, q=q, corr=corr, S_w=S_w, M=M
-                )
+                {f"{graphs_state}": generate_graphs(self.state["W"], output_path=output_path, q=q, corr=corr, S_w=S_w, M=M
+                )}
             ),
         )
         self.pipeline.append(step)
 
-    def graph_destruction(self, output_path:str):
+    def graph_destruction(self, output_path:str, graphs_state ="graphs", n_components_state = "n_components", W_sorted_state = "W_sorted"):
         step = (
             "Graph Edge Destruction",
             lambda: self.state.update(dict(zip(
-                ["n_components", "W_sorted"], 
-                graph_edge_destruction(G=self.state["graphs"], output_path=output_path))
+                [f"{n_components_state}", f"{W_sorted_state}"], 
+                graph_edge_destruction(G=self.state[f"{graphs_state}"], output_path=output_path))
                 )
             ),
         )
         self.pipeline.append(step)
 
-    def plot_destruction_heatmap(self, output_path: str, T: int, S_w: int, M: int):
+    def plot_destruction_heatmap(self, output_path: str, T: int, S_w: int, M: int, n_components_state = "n_components"):
         step = (
             "Plot Graph Destruction Heatmap",
             lambda: plot_graph_destruction_heatmap(
-                n_components=self.state["n_components"], output_path=output_path, T=T, S_w=S_w, M=M
+                n_components=self.state[f"{n_components_state}"], output_path=output_path, T=T, S_w=S_w, M=M
             )
         )
         self.pipeline.append(step)
 
-    def plot_destruction_AUC(self, output_path: str, time_windows: list):
+    def plot_destruction_AUC(self, output_path: str, time_windows: list, W_sorted_state = "W_sorted"):
         step = (
             "Plot Graph Components + AUC",
             lambda: graph_components_AUC(
-                W_sorted=self.state["W_sorted"], time_windows=time_windows, output_path=output_path
+                W_sorted=self.state[f"{W_sorted_state}"], time_windows=time_windows, output_path=output_path
             )
         )
         self.pipeline.append(step)
