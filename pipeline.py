@@ -27,16 +27,21 @@ def run_scene(pipeline: PipelineBuilder, scene: int):
     # -----------------------
 
     output_path = f"output/experiment/scene_{scene}"
+    os.makedirs(output_path, exist_ok=True)
+    os.makedirs(f"{output_path}/graph", exist_ok=True)
+    os.makedirs(f"{output_path}/plot/AUC", exist_ok=True)
 
     pipeline.data_generation(output_path=output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV)
     pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
     
-    corr_weights = [Pearson(), Spearman(), Kendall()]
-    for c in corr_weights:
+    corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall()}
+    for n, c in corr_weights.item():
+        pipeline.state.update({f"graphs_{n}": None, f"n_components_{n}": None, f"W_sorted_{n}": None})
+
         pipeline.graph_generation(output_path=f"{output_path}/graph", q=Pairwise(), corr=c, S_w=S_W, M=M)
         pipeline.graph_destruction(output_path=output_path)
-        pipeline.plot_destruction_heatmap(output_path=output_path, T=T, S_w=S_W, M=M)
-        pipeline.plot_destruction_AUC(output_path=output_path, time_windows=list(range(0, T - S_W + 1, M)))
+        pipeline.plot_destruction_heatmap(output_path=f"{output_path}/plot", T=T, S_w=S_W, M=M)
+        pipeline.plot_destruction_AUC(output_path=f"{output_path}/plot/AUC", time_windows=list(range(0, T - S_W + 1, M)))
         # CDF
 
 
@@ -71,8 +76,10 @@ def run_pipeline():
 
     pipeline = PipelineBuilder(state)
     
-    run_all(pipeline)
-    pipeline.execute_pipeline()
+    # run_all(pipeline)
+    for i in range(1, 4):
+        run_scene(pipeline, i)
+        pipeline.execute_pipeline()
 
 if __name__ == "__main__":
     run_pipeline()
