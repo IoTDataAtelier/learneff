@@ -13,6 +13,33 @@ from classes.weight_association import Pearson, Spearman, Kendall
 
 from pipeline_builder import PipelineBuilder
 
+def run_scene(pipeline: PipelineBuilder, scene: int):
+    
+    # ---- Variable config ----
+    D = 11           # number of features
+    N = 100          # number of samples
+    T = 100          # number of epochs
+    LR = 0.001        # learning rate
+    NOISE = 1.0      # noise level
+    S_W = 10         # sliding window size for graphs
+    M = 5            # stride between windows
+    COV = np.eye(D-1)
+    # -----------------------
+
+    output_path = f"output/experiment/scene_{scene}"
+
+    pipeline.data_generation(output_path=output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV)
+    pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
+    
+    corr_weights = [Pearson(), Spearman(), Kendall()]
+    for c in corr_weights:
+        pipeline.graph_generation(output_path=f"{output_path}/graph", q=Pairwise(), corr=c, S_w=S_W, M=M)
+        pipeline.graph_destruction(output_path=output_path)
+        pipeline.plot_destruction_heatmap(output_path=output_path, T=T, S_w=S_W, M=M)
+        pipeline.plot_destruction_AUC(output_path=output_path, time_windows=list(range(0, T - S_W + 1, M)))
+        # CDF
+
+
 def run_all(pipeline: PipelineBuilder):
 
     # ---- Variable config ----
