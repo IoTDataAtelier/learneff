@@ -13,18 +13,19 @@ from classes.weight_association import Pearson, Spearman, Kendall
 
 from pipeline_builder import PipelineBuilder
 
-# ---- Global config ----
-D = 10           # number of features
-N = 100          # number of samples
-T = 100          # number of epochs
-LR = 0.01        # learning rate
-NOISE = 0.7      # noise level
-S_W = 10         # sliding window size for graphs
-M = 5            # stride between windows
-COV = np.eye(D-1)
-# -----------------------
-
 def run_all(pipeline: PipelineBuilder):
+
+    # ---- Variable config ----
+    D = 10           # number of features
+    N = 100          # number of samples
+    T = 100          # number of epochs
+    LR = 0.01        # learning rate
+    NOISE = 0.7      # noise level
+    S_W = 10         # sliding window size for graphs
+    M = 5            # stride between windows
+    COV = np.eye(D-1)
+    # -----------------------
+
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     experiment_dir = f"experiment_{timestamp}"
     output_path = f"output/{experiment_dir}"
