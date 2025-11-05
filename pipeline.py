@@ -29,10 +29,11 @@ def run_all(pipeline: PipelineBuilder):
     experiment_dir = f"experiment_{timestamp}"
     output_path = f"output/{experiment_dir}"
     os.makedirs(output_path, exist_ok=True)
+    os.makedirs(f"{output_path}/graph", exist_ok=True)
 
     pipeline.data_generation(output_path=output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV)
     pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
-    pipeline.graph_generation(output_path=output_path, q=Pairwise(), corr=Kendall(), S_w=S_W, M=M)
+    pipeline.graph_generation(output_path=f"{output_path}/graph", q=Pairwise(), corr=Kendall(), S_w=S_W, M=M)
     pipeline.graph_destruction(output_path=output_path)
     pipeline.plot_destruction_heatmap(output_path=output_path, T=T, S_w=S_W, M=M)
     pipeline.plot_destruction_AUC(output_path=output_path, time_windows=list(range(0, T - S_W + 1, M)))
