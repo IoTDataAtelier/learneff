@@ -1,16 +1,6 @@
 from datetime import datetime
 import os
 import numpy as np
-from lib.logger import success
-from lib.functions import plot_graph_destruction_heatmap
-
-#---- Experiment Phases ----
-from scripts.synthetic_data_generation import synthetic_data_generation
-from scripts.training_process import training_process
-from scripts.graph_generation import generate_graphs
-from scripts.graph_destruction import graph_edge_destruction
-from scripts.components_AUC import graph_components_AUC
-# -----------------------
 
 #---- Classes ----
 from classes.data_generation import MultivariateGaussian, RandomColumnVector, LinearPlusNoise, RandomRowVector
@@ -20,6 +10,8 @@ from classes.algorithm import Newton, GradientDescent
 from classes.graph_gen import Pairwise
 from classes.weight_association import Pearson, Spearman, Kendall
 # -----------------------
+
+from pipeline_builder import PipelineBuilder
 
 # ---- Global config ----
 D = 10           # number of features
@@ -32,68 +24,26 @@ M = 5            # stride between windows
 COV = np.eye(D-1)
 # -----------------------
 
-
-def run_pipeline():
+def run_all(pipeline: PipelineBuilder):
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     experiment_dir = f"experiment_{timestamp}"
     output_path = f"output/{experiment_dir}"
     os.makedirs(output_path, exist_ok=True)
 
+    pipeline.data_generation(output_path=output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV)
+    pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
+    pipeline.graph_generation(output_path=output_path, q=Pairwise(), corr=Kendall(), S_w=S_W, M=M)
+    pipeline.graph_destruction(output_path=output_path)
+    pipeline.plot_destruction_heatmap(output_path=output_path, T=T, S_w=S_W, M=M)
+    pipeline.plot_destruction_AUC(output_path=output_path, time_windows=list(range(0, T - S_W + 1, M)))
+
+def run_pipeline():
     state = {"filepath": "", "w_true": None, "W": None, "graphs": None, "n_components": None, "W_sorted": None}
 
-    pipeline_steps = [
-        (
-            "Generating Synthetic Data",
-            lambda: (
-                state.update(dict(zip(
-                    ["filepath", "w_true"],
-                    synthetic_data_generation(output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV)))
-                )
-            ),
-        ),
-        (
-            "Training Process",
-            lambda: state.update(
-                W=training_process(
-                    output_path, filepath=state["filepath"], D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent()
-                )
-            ),
-        ),
-        (
-            "Graph Generation and Graph Plot",
-            lambda: state.update(
-                graphs=generate_graphs(state["W"], output_path, q=Pairwise(), corr=Kendall(), S_w=S_W, M=M
-                )
-            ),
-        ),
-        (
-            "Graph Edge Destruction",
-            lambda: state.update(dict(zip(
-                ["n_components", "W_sorted"], 
-                graph_edge_destruction(G=state["graphs"], output_path=output_path))
-                )
-            ),
-        ),
-        (
-            "Plot Graph Destruction Heatmap",
-            lambda: plot_graph_destruction_heatmap(
-                n_components=state["n_components"], output_path=output_path, T=T, S_w=S_W, M=M
-            )
-        ),
-        (
-            "Plot Graph Components + AUC",
-            lambda: graph_components_AUC(
-                W_sorted=state["W_sorted"], time_windows=list(range(0, T - S_W + 1, M)), output_path=output_path
-            )
-        )
-    ]
-
-    for index, (step_name, step_action) in enumerate(pipeline_steps):
-        success(f"Executing step {index + 1}: {step_name}\n")
-        step_action()
-
-    success(f"\nPipeline execution completed successfully. Results stored in: {output_path}")
-
+    pipeline = PipelineBuilder(state)
+    
+    run_all(pipeline)
+    pipeline.execute_pipeline()
 
 if __name__ == "__main__":
     run_pipeline()

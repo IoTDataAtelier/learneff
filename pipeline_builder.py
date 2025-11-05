@@ -26,7 +26,7 @@ class PipelineBuilder(BaseClass):
             lambda: (
                 self.state.update(dict(zip(
                     ["filepath", "w_true"],
-                    synthetic_data_generation(self.output_path, f_theta=self.f_theta, r_omega=self.r_omega, g_lambda=self.g_lambda, N=self.N, D=self.D, noise=self.noise, cov=self.cov)))
+                    synthetic_data_generation(output_path=self.output_path, f_theta=self.f_theta, r_omega=self.r_omega, g_lambda=self.g_lambda, N=self.N, D=self.D, noise=self.noise, cov=self.cov)))
                 )
             ),
         )
@@ -38,7 +38,7 @@ class PipelineBuilder(BaseClass):
             "Training Process",
             lambda: self.state.update(
                 W=training_process(
-                    self.output_path, filepath=self.state["filepath"], D=self.D, T=self.T, lr=self.lr, r_omega=self.r_omega, e_phi=self.e_phi, H = self.H, a = self.a
+                    output_path=self.output_path, filepath=self.state["filepath"], D=self.D, T=self.T, lr=self.lr, r_omega=self.r_omega, e_phi=self.e_phi, H = self.H, a = self.a
                 )
             ),
         )
@@ -49,7 +49,7 @@ class PipelineBuilder(BaseClass):
         step = (
             "Graph Generation and Graph Plot",
             lambda: self.state.update(
-                graphs=generate_graphs(self.state["W"], self.output_path, q=self.q, corr=self.corr, S_w=self.S_w, M=self.M
+                graphs=generate_graphs(self.state["W"], output_path=self.output_path, q=self.q, corr=self.corr, S_w=self.S_w, M=self.M
                 )
             ),
         )
@@ -82,7 +82,7 @@ class PipelineBuilder(BaseClass):
         step = (
             "Plot Graph Components + AUC",
             lambda: graph_components_AUC(
-                W_sorted=self.state["W_sorted"], time_windows=list(range(0, self.T - self.S_w + 1, self.M)), output_path=self.output_path
+                W_sorted=self.state["W_sorted"], time_windows=self.time_windows, output_path=self.output_path
             )
         )
         self.pipeline.append(step)
