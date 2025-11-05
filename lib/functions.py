@@ -112,6 +112,7 @@ def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T:
     
     fname = os.path.join(output_path, f"graph_heatmap.png")
     fig.savefig(fname)
+    plt.close()
 
 def plot_AUC(t: int, Wt: np.ndarray, AUC: float, output_path:str):
     fig, ax = plt.subplots()
@@ -146,6 +147,7 @@ def plot_AUC(t: int, Wt: np.ndarray, AUC: float, output_path:str):
 
     fname = os.path.join(output_path, f"graph_AUC_{t}.png")
     fig.savefig(fname)
+    plt.close()
 
 def save_graph(G, output_path, start_epoch, last_epoch):
     fname = os.path.join(output_path, f"graph_{start_epoch}_{last_epoch}.gml")
