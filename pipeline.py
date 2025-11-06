@@ -43,14 +43,14 @@ def run_scene(pipeline: PipelineBuilder, scene: int):
 
         corr_output = f"{output_path}/{n}"
         graphs_output = f"{corr_output}/graph"
-        plots_output = f"{corr_output}/plot"
+        plots_output = f"{corr_output}/data"
         AUC_output = f"{plots_output}/AUC"
 
         os.makedirs(graphs_output, exist_ok=True)
         os.makedirs(AUC_output, exist_ok=True)
 
         pipeline.graph_generation(q=Pairwise(), corr=c, S_w=S_W, M=M, graphs_state=graphs_state, output_path=graphs_output)
-        pipeline.graph_destruction(graphs_state=graphs_state, n_components_state=n_components_state, W_sorted_state=W_sorted_state, output_path=corr_output)
+        pipeline.graph_destruction(graphs_state=graphs_state, n_components_state=n_components_state, W_sorted_state=W_sorted_state, output_path=plots_output)
         pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, n_components_state=n_components_state, output_path=plots_output)
         pipeline.plot_destruction_AUC(time_windows=list(range(0, T - S_W + 1, M)), W_sorted_state=W_sorted_state, output_path=AUC_output)
         # CDF
