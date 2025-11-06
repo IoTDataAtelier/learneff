@@ -2,6 +2,7 @@ from classes.base_class import BaseClass
 from abc import abstractmethod
 import scipy.stats as st
 import numpy as np
+import random
 
 class DataGenerationStrategy(BaseClass):
 
@@ -40,17 +41,32 @@ class RandomRowVector(DataGenerationStrategy):
 
 class RandomColumnVector(DataGenerationStrategy):
 
-    def gen(self, **kwargs):
+    def gen(self, drop = None, **kwargs):
         self.set_attributes(kwargs)
         
         w = np.array(st.norm.rvs(size = self.D)).T
         w = w.reshape(-1, 1)
+
+        # Drop is a number [0, 1) repressenting how many numbers to take off
+        if drop != None:
+            dp = random.sample(range(1, self.D), int((self.D - 1) * drop))
+            for i in dp:
+                w[i] = 0
+
         return w
     
 class LinearPlusNoise(DataGenerationStrategy):
 
-    def gen(self, **kwargs):
+    def gen(self, drop = None, **kwargs):
         self.set_attributes(kwargs)
 
         noise = self.noise_level * np.random.randn(self.X.shape[0], 1)
-        return self.X @ self.w + noise
+        y = self.X @ self.w + noise
+
+        if drop != None:
+            size = self.X.shape[1]
+            dp = random.sample(range(1, size), int((size - 1) * drop))
+            self.X = np.delete(self.X, dp, axis = 1)
+            self.w = np.delete(self.w, dp, axis = 0)
+
+        return self.X, self.w, y

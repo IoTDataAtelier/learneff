@@ -28,13 +28,13 @@ class PipelineBuilder(BaseClass):
         self.pipeline = []
         self.state = state
 
-    def data_generation(self, output_path: str, f_theta: DataGenerationStrategy, r_omega: DataGenerationStrategy, g_lambda: DataGenerationStrategy, N: int, D: int, noise: float, cov=None):
+    def data_generation(self, output_path: str, f_theta: DataGenerationStrategy, r_omega: DataGenerationStrategy, g_lambda: DataGenerationStrategy, N: int, D: int, noise: float, cov=None, drop_w=None, drop_data=None):
         step = (
             "Generating Synthetic Data",
             lambda: (
                 self.state.update(dict(zip(
                     ["filepath", "w_true"],
-                    synthetic_data_generation(output_path=output_path, f_theta=f_theta, r_omega=r_omega, g_lambda=g_lambda, N=N, D=D, noise=noise, cov=cov)))
+                    synthetic_data_generation(output_path=output_path, f_theta=f_theta, r_omega=r_omega, g_lambda=g_lambda, N=N, D=D, noise=noise, cov=cov, drop_w=drop_w, drop_data=drop_data)))
                 )
             ),
         )
