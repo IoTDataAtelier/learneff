@@ -23,11 +23,12 @@ def synthetic_data_generation(output_path: str,
                               g_lambda: DataGenerationStrategy,
                               cov: np.ndarray,
                               drop_w = None,
+                              drop_data = None,
                               N: int = 200, D: int = 5, noise: float = 0.1
                               ):
     X = f_theta.gen(N = N, D = D, cov = cov)
     w = r_omega.gen(D = D, drop = drop_w)
-    y = g_lambda.gen(X = X, w = w, noise_level = noise)
+    X, w, y = g_lambda.gen(X = X, w = w, noise_level = noise, drop = drop_data)
 
     filepath = save_dataset_avro(X, y, w, output_path)
 

@@ -13,10 +13,9 @@ from classes.weight_association import Pearson, Spearman, Kendall
 
 from pipeline_builder import PipelineBuilder
 
-def run_scene(pipeline: PipelineBuilder, scene: int, drop_w = None):
+def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop_data = None):
     
     # ---- Variable config ----
-    D = 11           # number of features
     N = 100          # number of samples
     T = 100          # number of epochs
     LR = 0.001        # learning rate
@@ -29,7 +28,11 @@ def run_scene(pipeline: PipelineBuilder, scene: int, drop_w = None):
     output_path = f"output/experiment/scene_{scene}"
     os.makedirs(output_path, exist_ok=True)
 
-    pipeline.data_generation(output_path=output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV, drop_w=drop_w)
+    pipeline.data_generation(output_path=output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV, drop_w=drop_w, drop_data=drop_data)
+    
+    if drop_data != None:
+        D = int((D - 1) * drop_data) + 1
+    
     pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
     
     corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall()}
@@ -88,10 +91,16 @@ def run_pipeline():
     pipeline = PipelineBuilder(state)
     
     #run_all(pipeline)
-    #for i in range(1, 4):
-    #    run_scene(pipeline, i)
-    #    pipeline.execute_pipeline()
-    run_scene(pipeline, 1, 0.5)
+    
+    run_scene(pipeline, 1, D=11)
+    pipeline.execute_pipeline()
+    pipeline.pipeline = []
+
+    run_scene(pipeline, 2, D=11, drop_w=0.5)
+    pipeline.execute_pipeline()
+    pipeline.pipeline = []
+
+    run_scene(pipeline, 3, D=21, drop_data=0.5)
     pipeline.execute_pipeline()
 
 if __name__ == "__main__":
