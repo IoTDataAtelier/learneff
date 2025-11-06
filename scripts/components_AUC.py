@@ -1,9 +1,11 @@
 from lib.functions import plot_AUC
 import numpy as np
+import os
 
 def graph_components_AUC(W_sorted: np.ndarray, time_windows: list, output_path:str, e = 1e-9):
     AUC_total = 0
     AUC_partial = 0
+    AUC = np.zeros(len(time_windows))
 
     for t in range(0, len(time_windows)):
         Wt = W_sorted[t] # Array of tuples with (weight_value, quantity of components)
@@ -17,6 +19,8 @@ def graph_components_AUC(W_sorted: np.ndarray, time_windows: list, output_path:s
 
         plot_AUC(time_windows[t], Wt, AUC_partial, output_path)
         AUC_total += AUC_partial
+        AUC[t] = AUC_partial
         AUC_partial = 0
 
+    np.save(os.path.join(output_path, "graph_partial_AUC.npy"), AUC)
     print(AUC_total)
