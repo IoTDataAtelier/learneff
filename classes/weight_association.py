@@ -3,6 +3,7 @@ from abc import abstractmethod
 import numpy as np
 import scipy.stats as st
 import scipy.signal as ss
+from numpy.linalg import norm
 
 class AssociationStrategy(BaseClass):
 
@@ -46,3 +47,11 @@ class CrossCorrelation(AssociationStrategy):
 
         cc = ss.correlate(self.x, self.y)
         return cc
+    
+class Cosine(AssociationStrategy):
+
+    def eval(self, **kwargs):
+        self.set_attributes(kwargs)
+
+        c = np.dot(self.x, self.y) / (norm(self.x) * norm(self.y))
+        return c

@@ -8,7 +8,7 @@ from classes.error_function import MeanSquaredError
 from classes.model import Linear
 from classes.algorithm import Newton, GradientDescent
 from classes.graph_gen import Pairwise
-from classes.weight_association import Pearson, Spearman, Kendall, CrossCorrelation
+from classes.weight_association import Pearson, Spearman, Kendall, CrossCorrelation, Cosine
 # -----------------------
 
 from pipeline_builder import PipelineBuilder
@@ -35,8 +35,8 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
     
     pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
     
-    #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall()}
-    corr_weights = {"cross_correlation": CrossCorrelation()}
+    #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation()}
+    corr_weights = {"cossine": Cosine()}
 
     for n, c in corr_weights.items():
         graphs_state = f"graphs_{n}"
