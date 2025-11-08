@@ -2,6 +2,7 @@ from classes.base_class import BaseClass
 from abc import abstractmethod
 import numpy as np
 import scipy.stats as st
+import scipy.signal as ss
 
 class AssociationStrategy(BaseClass):
 
@@ -37,3 +38,11 @@ class Kendall(AssociationStrategy):
 
         sr = st.kendalltau(self.x, self.y)
         return sr.statistic
+    
+class CrossCorrelation(AssociationStrategy):
+
+    def eval(self, **kwargs):
+        self.set_attributes(kwargs)
+
+        cc = ss.correlate(self.x, self.y)
+        return cc

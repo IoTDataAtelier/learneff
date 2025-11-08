@@ -8,7 +8,7 @@ from classes.error_function import MeanSquaredError
 from classes.model import Linear
 from classes.algorithm import Newton, GradientDescent
 from classes.graph_gen import Pairwise
-from classes.weight_association import Pearson, Spearman, Kendall
+from classes.weight_association import Pearson, Spearman, Kendall, CrossCorrelation
 # -----------------------
 
 from pipeline_builder import PipelineBuilder
@@ -18,10 +18,10 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
     # ---- Variable config ----
     N = 100          # number of samples
     T = 100          # number of epochs
-    LR = 0.001        # learning rate
+    LR = 1e-5        # learning rate
     NOISE = 1.0      # noise level
-    S_W = 10         # sliding window size for graphs
-    M = 5            # stride between windows
+    S_W = 5         # sliding window size for graphs
+    M = 2            # stride between windows
     COV = np.eye(D-1)
     # -----------------------
 
@@ -35,7 +35,8 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
     
     pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
     
-    corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall()}
+    #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall()}
+    corr_weights = {"cross_correlation": CrossCorrelation()}
 
     for n, c in corr_weights.items():
         graphs_state = f"graphs_{n}"
@@ -96,12 +97,12 @@ def run_pipeline():
     pipeline.execute_pipeline()
     pipeline.pipeline = []
 
-    run_scene(pipeline, 2, D=11, drop_w=0.5)
-    pipeline.execute_pipeline()
-    pipeline.pipeline = []
+    #run_scene(pipeline, 2, D=11, drop_w=0.5)
+    #pipeline.execute_pipeline()
+    #pipeline.pipeline = []
 
-    run_scene(pipeline, 3, D=21, drop_data=0.5)
-    pipeline.execute_pipeline()
+    #run_scene(pipeline, 3, D=21, drop_data=0.5)
+    #pipeline.execute_pipeline()
 
 if __name__ == "__main__":
     run_pipeline()
