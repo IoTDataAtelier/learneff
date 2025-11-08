@@ -23,7 +23,7 @@ class Pairwise(GraphGenerationStrategy):
         # Add edges based on correlation
         for i in range(self.D):
             for j in range(i + 1, self.D):
-                corr = self.corr_op.eval(x=self.Wt[i], y=self.Wt[j])
+                corr = self.corr_op.eval(x=self.Wt[i], y=self.Wt[j], dx = i, dy = j)
                 corr = abs(corr)
 
                 if type(corr) == np.ndarray:

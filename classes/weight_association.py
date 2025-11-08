@@ -77,13 +77,13 @@ class ICC(AssociationStrategy):
         p = np.array([i/len(values) for i in quant])
         h = st.entropy(p, base = 2)
 
-        if h == 0:
+        if h == np.log2(self.q + 1):
             return 0
         else:
-            if len(values) == 2:
+            if len(values) <= 2:
                 p1 = p[0]
-                p2 = p[1]
-            if values % 2 == 0:
+                p2 = 1 - p[0]
+            elif values % 2 == 0:
                 half = (self.q + 1)/2
                 p1 = sum(p[0: half])
                 p2 = sum(p[half: self])
@@ -110,12 +110,16 @@ class ICC(AssociationStrategy):
 
     def sq(self, v: np.ndarray):
         sqv = []
+        before = 1
         for i in range(self.q, len(v)):
             for j in range(i - self.q, i):
-                if v[i] >= v[j]:
+                if v[i] == v[j]:
+                    s = before
+                elif v[i] > v[j]:
                     s = 1
                 else:
                     s = 0
+                before = s
                 sqv.append(s)
 
         return np.array(sqv)
