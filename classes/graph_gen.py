@@ -1,5 +1,6 @@
 from classes.base_class import BaseClass
 from abc import abstractmethod
+import numpy as np
 
 class GraphGenerationStrategy(BaseClass):
 
@@ -22,8 +23,12 @@ class Pairwise(GraphGenerationStrategy):
         # Add edges based on correlation
         for i in range(self.D):
             for j in range(i + 1, self.D):
-                corr = self.corr_op.eval(x=self.Wt[i], y=self.Wt[j])
+                corr = self.corr_op.eval(x=self.Wt[i], y=self.Wt[j], dx = i, dy = j)
                 corr = abs(corr)
+
+                if type(corr) == np.ndarray:
+                    corr = max(corr)
+
                 if corr > self.min:
                     self.G.add_edge(i, j, weight=corr)
 
