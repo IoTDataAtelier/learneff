@@ -24,3 +24,25 @@ def graph_components_AUC(W_sorted: np.ndarray, time_windows: list, output_path:s
 
     np.save(os.path.join(output_path, "graph_partial_AUC.npy"), AUC)
     print(AUC_total)
+
+def AUC_interpolation(W_sorted: np.ndarray, time_windows: list, output_path:str, delta=0.001):
+    areas = []
+    tx = np.arange(0, 1 + delta, delta)
+    
+    for t in range(0, len(time_windows)):
+        Wt = W_sorted[t]
+
+        x = [i[0] for i in Wt]
+        y = [i[1] for i in Wt]
+        x.append(1.0)
+        y.append(y[len(y) - 1])
+
+        idx = np.searchsorted(x, tx, side="left")
+        idx = np.clip(idx, 0, len(x) - 1)
+        AUC_partial = sum(idx)
+        
+        areas.append(AUC_partial)
+        plot_AUC(time_windows[t], Wt, AUC_partial, output_path) # Vizualize the result
+
+    np.save(os.path.join(output_path, "graph_partial_AUC.npy"), areas)
+    print(sum(areas))
