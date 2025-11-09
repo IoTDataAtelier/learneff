@@ -6,7 +6,7 @@ from scripts.synthetic_data_generation import synthetic_data_generation
 from scripts.training_process import training_process
 from scripts.graph_generation import generate_graphs
 from scripts.graph_destruction import graph_edge_destruction
-from scripts.components_AUC import graph_components_AUC
+from scripts.components_AUC import graph_components_AUC, AUC_interpolation 
 # -----------------------
 
 #---- Experiment Plots ----
@@ -84,7 +84,7 @@ class PipelineBuilder(BaseClass):
     def plot_destruction_AUC(self, output_path: str, time_windows: list, W_sorted_state = "W_sorted"):
         step = (
             "Plot Graph Components + AUC",
-            lambda: graph_components_AUC(
+            lambda: AUC_interpolation(
                 W_sorted=self.state[f"{W_sorted_state}"], time_windows=time_windows, output_path=output_path
             )
         )

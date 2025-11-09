@@ -34,8 +34,8 @@ def AUC_interpolation(W_sorted: np.ndarray, time_windows: list, output_path:str,
 
         x = [i[0] for i in Wt]
         y = [i[1] for i in Wt]
-        x.append(1.0)
-        y.append(y[len(y) - 1])
+        #x.append(1.0)
+        #y.append(y[len(y) - 1])
 
         idx = np.searchsorted(x, tx, side="left")
         idx = np.clip(idx, 0, len(x) - 1)

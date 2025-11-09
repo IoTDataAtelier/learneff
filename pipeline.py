@@ -25,7 +25,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
     COV = np.eye(D-1)
     # -----------------------
 
-    output_path = f"output/experiment_test/scene_{scene}"
+    output_path = f"output/AUC_test_2/scene_{scene}"
     os.makedirs(output_path, exist_ok=True)
 
     pipeline.data_generation(output_path=output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV, drop_w=drop_w, drop_data=drop_data)
@@ -35,8 +35,8 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
     
     pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
     
-    #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation(), "cossine": Cosine()}
-    corr_weights = {"icc": ICC()}
+    #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation(), "cossine": Cosine(), "icc": ICC()}
+    corr_weights = {"cross_correlation": CrossCorrelation()}
 
     for n, c in corr_weights.items():
         graphs_state = f"graphs_{n}"
