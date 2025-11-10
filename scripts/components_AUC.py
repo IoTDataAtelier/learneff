@@ -1,6 +1,7 @@
 from lib.functions import plot_AUC
 import numpy as np
 import os
+import scipy.interpolate as it
 
 def graph_components_AUC(W_sorted: np.ndarray, time_windows: list, output_path:str, e = 1e-9):
     AUC_total = 0
@@ -27,19 +28,18 @@ def graph_components_AUC(W_sorted: np.ndarray, time_windows: list, output_path:s
 
 def AUC_interpolation(W_sorted: np.ndarray, time_windows: list, output_path:str, delta=0.001):
     areas = []
-    tx = np.arange(0, 1 + delta, delta)
     
     for t in range(0, len(time_windows)):
         Wt = W_sorted[t]
 
         x = [i[0] for i in Wt]
         y = [i[1] for i in Wt]
-        #x.append(1.0)
-        #y.append(y[len(y) - 1])
 
-        idx = np.searchsorted(x, tx, side="left")
-        idx = np.clip(idx, 0, len(x) - 1)
-        AUC_partial = sum(idx)
+        tx = np.arange(min(x), max(x), delta)
+
+        f = it.interp1d(x, y, kind="nearest")
+        ty = map(float, map(f, tx))
+        AUC_partial = sum(ty)
         
         areas.append(AUC_partial)
         plot_AUC(time_windows[t], Wt, AUC_partial, output_path) # Vizualize the result
