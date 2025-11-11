@@ -20,6 +20,7 @@ from classes.algorithm import AlgorithmStrategy
 from classes.error_function import ErrorFunctionStrategy
 from classes.graph_gen import GraphGenerationStrategy
 from classes.weight_association import AssociationStrategy
+from classes.normalization import NormalizationStrategy
 # -----------------------
 
 class PipelineBuilder(BaseClass):
@@ -94,6 +95,16 @@ class PipelineBuilder(BaseClass):
         self.set_attributes(kwargs)
         #self.pipeline.append(step)
         pass
+
+    def normalize_data(self, norm_f: NormalizationStrategy, norm_state: str):
+        step = (
+            f"Normalize data from {norm_state}",
+            lambda: self.state.update(
+                {f"{norm_state}": norm_f.norm(x = self.state[norm_state] 
+                )}
+            ),
+        )
+        self.pipeline.append(step)
 
     def execute_pipeline(self):
         for index, (step_name, step_action) in enumerate(self.pipeline):

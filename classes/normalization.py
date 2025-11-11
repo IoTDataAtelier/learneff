@@ -1,28 +1,22 @@
 from classes.base_class import BaseClass
 from abc import abstractmethod
-import numpy as np
+from sklearn.preprocessing import MinMaxScaler
 
 class NormalizationStrategy(BaseClass):
 
     @abstractmethod
-    def update(self, **kwargs):
+    def norm(self, **kwargs):
         """
         Normalize values of a random vector/matrix
         """
         pass
+    
+class MinMaxNorm(NormalizationStrategy):
 
-class SumNorm(NormalizationStrategy):
-
-    def update(self, **kwargs):
+    def norm(self, **kwargs):
         self.set_attributes(kwargs)
 
-        s = sum(self.x)
-        m = lambda v : v/s
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        self.x = scaler.fit_transform(self.x)
 
-        if len(self.x.shape) == 2:
-            for i in range(0, self.x.shape[0]):
-                for j in range(0, self.x.shape[0]):
-                    self.x[i] = m(self.x[i])
-        else: # shape 1
-            for i in range(0, len(self.x) - 1):
-                self.x[i] = m(self.x[i])
+        return self.x
