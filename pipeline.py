@@ -9,7 +9,7 @@ from classes.model import Linear
 from classes.algorithm import Newton, GradientDescent
 from classes.graph_gen import Pairwise
 from classes.weight_association import Pearson, Spearman, Kendall, CrossCorrelation, Cosine, ICC
-from classes.normalization import SumNorm, MinMaxNorm
+from classes.normalization import MinMaxNorm
 # -----------------------
 
 from pipeline_builder import PipelineBuilder
@@ -38,7 +38,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
     pipeline.normalize_data(norm_f = MinMaxNorm(), norm_state = "W")
 
     #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation(), "cossine": Cosine(), "icc": ICC()}
-    corr_weights = {"cross_correlation": CrossCorrelation()}
+    corr_weights = {"cross_correlation": CrossCorrelation(), "icc": ICC()}
 
     for n, c in corr_weights.items():
         graphs_state = f"graphs_{n}"
@@ -58,7 +58,13 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
         pipeline.graph_generation(q=Pairwise(), corr=c, S_w=S_W, M=M, graphs_state=graphs_state, output_path=graphs_output)
         pipeline.graph_destruction(graphs_state=graphs_state, n_components_state=n_components_state, W_sorted_state=W_sorted_state, output_path=plots_output)
         pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, n_components_state=n_components_state, output_path=plots_output)
-        pipeline.plot_destruction_AUC(time_windows=list(range(0, T - S_W + 1, M)), W_sorted_state=W_sorted_state, output_path=AUC_output)
+
+        if n == "cross_correlation":
+            norm_x = True
+        else:
+            norm_x = False
+
+        pipeline.plot_destruction_AUC(time_windows=list(range(0, T - S_W + 1, M)), W_sorted_state=W_sorted_state, output_path=AUC_output, norm_f=MinMaxNorm(), norm_x=norm_x)
         # CDF
 
 
