@@ -2,6 +2,7 @@ from lib.functions import plot_AUC
 import numpy as np
 import os
 import scipy.interpolate as it
+from classes.normalization import NormalizationStrategy
 
 def graph_components_AUC(W_sorted: np.ndarray, time_windows: list, output_path:str, e = 1e-9):
     AUC_total = 0
@@ -26,18 +27,24 @@ def graph_components_AUC(W_sorted: np.ndarray, time_windows: list, output_path:s
     np.save(os.path.join(output_path, "graph_partial_AUC.npy"), AUC)
     print(AUC_total)
 
-def AUC_interpolation(W_sorted: np.ndarray, time_windows: list, output_path:str, delta=0.001):
+def AUC_interpolation(W_sorted: np.ndarray, time_windows: list, output_path:str, norm_f: NormalizationStrategy, norm_x:bool, delta=0.001):
     areas = []
     
     for t in range(0, len(time_windows)):
         Wt = W_sorted[t]
 
-        x = [i[0] for i in Wt]
-        y = [i[1] for i in Wt]
+        x = np.array([i[0] for i in Wt])
+        y = np.array([i[1] for i in Wt])
+        x = x.reshape(-1, 1)
+        y = y.reshape(-1, 1)
+
+        if norm_x:
+            x = norm_f.norm(x=x)
+        y = norm_f.norm(x=y)
 
         tx = np.arange(min(x), max(x), delta)
 
-        f = it.interp1d(x, y, kind="nearest")
+        f = it.interp1d(x.flatten(), y.flatten(), kind="nearest")
         ty = map(float, map(f, tx))
         AUC_partial = sum(ty)
         

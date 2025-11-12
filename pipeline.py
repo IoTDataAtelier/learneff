@@ -9,6 +9,7 @@ from classes.model import Linear
 from classes.algorithm import Newton, GradientDescent
 from classes.graph_gen import Pairwise
 from classes.weight_association import Pearson, Spearman, Kendall, CrossCorrelation, Cosine, ICC
+from classes.normalization import MinMaxNorm
 # -----------------------
 
 from pipeline_builder import PipelineBuilder
@@ -25,7 +26,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
     COV = np.eye(D-1)
     # -----------------------
 
-    output_path = f"output/AUC_test_2/scene_{scene}"
+    output_path = f"output/norm_all/scene_{scene}"
     os.makedirs(output_path, exist_ok=True)
 
     pipeline.data_generation(output_path=output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV, drop_w=drop_w, drop_data=drop_data)
@@ -34,9 +35,10 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
         D = int((D - 1) * drop_data) + 1
     
     pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
-    
+    pipeline.normalize_data(norm_f = MinMaxNorm(), norm_state = "W")
+
     #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation(), "cossine": Cosine(), "icc": ICC()}
-    corr_weights = {"cross_correlation": CrossCorrelation()}
+    corr_weights = {"cross_correlation": CrossCorrelation(), "icc": ICC()}
 
     for n, c in corr_weights.items():
         graphs_state = f"graphs_{n}"
@@ -53,10 +55,17 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
         os.makedirs(graphs_output, exist_ok=True)
         os.makedirs(AUC_output, exist_ok=True)
 
-        pipeline.graph_generation(q=Pairwise(), corr=c, S_w=S_W, M=M, graphs_state=graphs_state, output_path=graphs_output)
+        if n == "cross_correlation":
+            norm = MinMaxNorm()
+            norm_x = True
+        else:
+            norm = None
+            norm_x = False
+
+        pipeline.graph_generation(q=Pairwise(), corr=c, S_w=S_W, M=M, graphs_state=graphs_state, output_path=graphs_output, norm_f=norm)
         pipeline.graph_destruction(graphs_state=graphs_state, n_components_state=n_components_state, W_sorted_state=W_sorted_state, output_path=plots_output)
         pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, n_components_state=n_components_state, output_path=plots_output)
-        pipeline.plot_destruction_AUC(time_windows=list(range(0, T - S_W + 1, M)), W_sorted_state=W_sorted_state, output_path=AUC_output)
+        pipeline.plot_destruction_AUC(time_windows=list(range(0, T - S_W + 1, M)), W_sorted_state=W_sorted_state, output_path=AUC_output, norm_f=MinMaxNorm(), norm_x=norm_x)
         # CDF
 
 

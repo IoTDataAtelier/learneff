@@ -20,6 +20,7 @@ from classes.algorithm import AlgorithmStrategy
 from classes.error_function import ErrorFunctionStrategy
 from classes.graph_gen import GraphGenerationStrategy
 from classes.weight_association import AssociationStrategy
+from classes.normalization import NormalizationStrategy
 # -----------------------
 
 class PipelineBuilder(BaseClass):
@@ -51,11 +52,11 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def graph_generation(self, output_path: str, q: GraphGenerationStrategy, corr: AssociationStrategy, S_w: int, M: int, graphs_state = "graphs"):
+    def graph_generation(self, output_path: str, q: GraphGenerationStrategy, corr: AssociationStrategy, S_w: int, M: int, norm_f: NormalizationStrategy = None, graphs_state = "graphs"):
         step = (
             "Graph Generation and Graph Plot",
             lambda: self.state.update(
-                {f"{graphs_state}": generate_graphs(self.state["W"], output_path=output_path, q=q, corr=corr, S_w=S_w, M=M
+                {f"{graphs_state}": generate_graphs(self.state["W"], output_path=output_path, q=q, corr=corr, S_w=S_w, M=M, norm_f=norm_f
                 )}
             ),
         )
@@ -81,11 +82,11 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def plot_destruction_AUC(self, output_path: str, time_windows: list, W_sorted_state = "W_sorted"):
+    def plot_destruction_AUC(self, output_path: str, time_windows: list, norm_f: NormalizationStrategy, norm_x = False, W_sorted_state = "W_sorted"):
         step = (
             "Plot Graph Components + AUC",
             lambda: AUC_interpolation(
-                W_sorted=self.state[f"{W_sorted_state}"], time_windows=time_windows, output_path=output_path
+                W_sorted=self.state[f"{W_sorted_state}"], time_windows=time_windows, output_path=output_path, norm_f=norm_f, norm_x=norm_x
             )
         )
         self.pipeline.append(step)
@@ -94,6 +95,16 @@ class PipelineBuilder(BaseClass):
         self.set_attributes(kwargs)
         #self.pipeline.append(step)
         pass
+
+    def normalize_data(self, norm_f: NormalizationStrategy, norm_state: str):
+        step = (
+            f"Normalize data from {norm_state}",
+            lambda: self.state.update(
+                {f"{norm_state}": norm_f.norm(x = self.state[norm_state] 
+                )}
+            ),
+        )
+        self.pipeline.append(step)
 
     def execute_pipeline(self):
         for index, (step_name, step_action) in enumerate(self.pipeline):
