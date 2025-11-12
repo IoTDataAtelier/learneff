@@ -29,7 +29,7 @@ def graph_components_AUC(W_sorted: np.ndarray, time_windows: list, output_path:s
 
 def AUC_interpolation(W_sorted: np.ndarray, time_windows: list, output_path:str, norm_f: NormalizationStrategy, norm_x:bool, delta=0.001):
     areas = []
-    curves = []
+    #curves = []
     
     for t in range(0, len(time_windows)):
         Wt = W_sorted[t]
@@ -43,12 +43,16 @@ def AUC_interpolation(W_sorted: np.ndarray, time_windows: list, output_path:str,
             x = norm_f.norm(x=x)
         y = norm_f.norm(x=y)
 
-        tx = np.arange(min(x), max(x), delta)
+        if min(x) != max(x):
+            tx = np.arange(min(x), max(x), delta)
 
-        f = it.interp1d(x.flatten(), y.flatten(), kind="nearest")
-        ty = f(tx)
-        AUC_partial = sum(ty)
-        curves.append(ty)
+            f = it.interp1d(x.flatten(), y.flatten(), kind="nearest")
+            ty = f(tx)
+            AUC_partial = sum(ty)
+            #curves.append(ty)
+        else:
+            AUC_partial = 0
+            #curves.append(y.flatten())
         
         areas.append(AUC_partial)
         plot_AUC(time_windows[t], Wt, AUC_partial, output_path) # Vizualize the result
@@ -56,4 +60,4 @@ def AUC_interpolation(W_sorted: np.ndarray, time_windows: list, output_path:str,
     np.save(os.path.join(output_path, "graph_partial_AUC.npy"), areas)
     print(sum(areas))
     
-    return np.array(curves).T
+    #return np.array(curves).T
