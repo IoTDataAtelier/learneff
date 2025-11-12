@@ -80,10 +80,10 @@ def plot_graph(G, output_path, start_epoch, last_epoch):
 
 
 def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T: int, S_w: int, M: int):
-    x_axis = list(range(0, T - S_w + 1, S_w))
+    x_axis = list(range(0, T + 1, 10))
     y_axis = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
 
-    fig, ax = plt.subplots(figsize=(5.3, 5.7))
+    fig, ax = plt.subplots(figsize=(5.7, 5.7))
 
     # ---- Adjust colobar size ----
     divider = make_axes_locatable(ax)
@@ -91,7 +91,7 @@ def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T:
     fig.add_axes(ax_cb)
 
     # ---- Plot heatmap ----
-    im = ax.imshow(n_components, origin="lower", cmap=cm.Spectral_r)
+    im = ax.imshow(n_components, origin="lower", cmap=cm.Spectral_r, aspect='auto', interpolation="nearest")
 
     x_ticks = np.linspace(0, n_components.shape[1] - 1, len(x_axis))
     y_ticks = np.linspace(0, n_components.shape[0] - 1, len(y_axis))
