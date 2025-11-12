@@ -26,7 +26,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
     COV = np.eye(D-1)
     # -----------------------
 
-    output_path = f"output/norm/scene_{scene}"
+    output_path = f"output/norm_all/scene_{scene}"
     os.makedirs(output_path, exist_ok=True)
 
     pipeline.data_generation(output_path=output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV, drop_w=drop_w, drop_data=drop_data)
@@ -55,16 +55,15 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
         os.makedirs(graphs_output, exist_ok=True)
         os.makedirs(AUC_output, exist_ok=True)
 
-        pipeline.graph_generation(q=Pairwise(), corr=c, S_w=S_W, M=M, graphs_state=graphs_state, output_path=graphs_output)
+        if n == "cross_correlation":
+            norm = True
+        else:
+            norm = False
+
+        pipeline.graph_generation(q=Pairwise(), corr=c, S_w=S_W, M=M, graphs_state=graphs_state, output_path=graphs_output, norm_f=MinMaxNorm(),norm_w=norm)
         pipeline.graph_destruction(graphs_state=graphs_state, n_components_state=n_components_state, W_sorted_state=W_sorted_state, output_path=plots_output)
         pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, n_components_state=n_components_state, output_path=plots_output)
-
-        if n == "cross_correlation":
-            norm_x = True
-        else:
-            norm_x = False
-
-        pipeline.plot_destruction_AUC(time_windows=list(range(0, T - S_W + 1, M)), W_sorted_state=W_sorted_state, output_path=AUC_output, norm_f=MinMaxNorm(), norm_x=norm_x)
+        pipeline.plot_destruction_AUC(time_windows=list(range(0, T - S_W + 1, M)), W_sorted_state=W_sorted_state, output_path=AUC_output, norm_f=MinMaxNorm(), norm_x=norm)
         # CDF
 
 

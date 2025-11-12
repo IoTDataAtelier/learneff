@@ -4,24 +4,26 @@ import matplotlib.pyplot as plt
 import os
 from classes.graph_gen import GraphGenerationStrategy
 from classes.weight_association import AssociationStrategy
+from classes.normalization import NormalizationStrategy
 
 from lib.functions import plot_graph, save_graph
 
+def normalize_weights(G: nx.Graph, norm_f: NormalizationStrategy):
+    obtain_weights = lambda e : e[2]["weight"]
+    edges = G.edges(data=True)
+    weights = np.array(list(map(obtain_weights, edges)))
+    weights = weights.reshape(-1, 1)
+    weights = norm_f.norm(x = weights)
+    weights = weights.flatten()
 
-#def q(G: nx.graph, D: int, W: np.ndarray, t: int, e: int):
-    # Add nodes (weights/features)
-#    for i in range(D):
-#        G.add_node(i)
+    i = 0
+    for u, v in G.edges:
+        G[u][v]["weight"] = weights[i]
+        i += 1
 
-    # Add edges based on correlation
-#    for i in range(D):
-#        for j in range(i + 1, D):
-#            corr = pearson_corr(W[i, t:e], W[j, t:e])
-#            if abs(corr) > 0.5:
-#                G.add_edge(i, j, weight=corr)
-#    return G
+    return G
 
-def generate_graphs(W: np.ndarray, output_path: str, q: GraphGenerationStrategy, corr: AssociationStrategy, S_w: int = 10, M: int = 5, min: float = -2):
+def generate_graphs(W: np.ndarray, output_path: str, q: GraphGenerationStrategy, corr: AssociationStrategy, norm_f: NormalizationStrategy, norm_w: bool, S_w: int = 10, M: int = 5, min: float = -2):
     D, T = W.shape
     graphs = []
 
@@ -30,6 +32,8 @@ def generate_graphs(W: np.ndarray, output_path: str, q: GraphGenerationStrategy,
         G = nx.Graph()
 
         G = q.gen(G = G, D = D, Wt = W[:, t:e], min = min, corr_op = corr)
+        if norm_w:
+            G = normalize_weights(G=G, norm_f=norm_f)
 
         graphs.append(G)
 
