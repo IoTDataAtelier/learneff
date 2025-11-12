@@ -24,6 +24,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
     S_W = 5         # sliding window size for graphs
     M = 2            # stride between windows
     COV = np.eye(D-1)
+    norm = MinMaxNorm()
     # -----------------------
 
     output_path = f"output/norm_all/scene_{scene}"
@@ -38,7 +39,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
     pipeline.normalize_data(norm_f = MinMaxNorm(), norm_state = "W")
 
     #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation(), "cossine": Cosine(), "icc": ICC()}
-    corr_weights = {"cross_correlation": CrossCorrelation(), "icc": ICC()}
+    corr_weights = {"cross_correlation": CrossCorrelation()}
 
     for n, c in corr_weights.items():
         graphs_state = f"graphs_{n}"
@@ -55,17 +56,11 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
         os.makedirs(graphs_output, exist_ok=True)
         os.makedirs(AUC_output, exist_ok=True)
 
-        if n == "cross_correlation":
-            norm = MinMaxNorm()
-            norm_x = True
-        else:
-            norm = None
-            norm_x = False
-
         pipeline.graph_generation(q=Pairwise(), corr=c, S_w=S_W, M=M, graphs_state=graphs_state, output_path=graphs_output, norm_f=norm)
         pipeline.graph_destruction(graphs_state=graphs_state, n_components_state=n_components_state, W_sorted_state=W_sorted_state, output_path=plots_output)
-        pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, n_components_state=n_components_state, output_path=plots_output)
-        pipeline.plot_destruction_AUC(time_windows=list(range(0, T - S_W + 1, M)), W_sorted_state=W_sorted_state, output_path=AUC_output, norm_f=MinMaxNorm(), norm_x=norm_x)
+        pipeline.plot_destruction_AUC(time_windows=list(range(0, T - S_W + 1, M)), W_sorted_state=W_sorted_state, output_path=AUC_output, norm_f=MinMaxNorm())
+        pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, n_components_state="curves", output_path=plots_output)
+        
         # CDF
 
 

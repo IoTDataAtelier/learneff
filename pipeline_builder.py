@@ -82,11 +82,13 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def plot_destruction_AUC(self, output_path: str, time_windows: list, norm_f: NormalizationStrategy, norm_x = False, W_sorted_state = "W_sorted"):
+    def plot_destruction_AUC(self, output_path: str, time_windows: list, norm_f: NormalizationStrategy, norm_x = False, W_sorted_state = "W_sorted", curves_state = "curves"):
         step = (
-            "Plot Graph Components + AUC",
-            lambda: AUC_interpolation(
-                W_sorted=self.state[f"{W_sorted_state}"], time_windows=time_windows, output_path=output_path, norm_f=norm_f, norm_x=norm_x
+                "Plot Graph Components + AUC",
+                lambda: self.state.update( 
+                    {curves_state:AUC_interpolation(
+                    W_sorted=self.state[f"{W_sorted_state}"], time_windows=time_windows, output_path=output_path, norm_f=norm_f, norm_x=norm_x
+                )}
             )
         )
         self.pipeline.append(step)
