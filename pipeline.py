@@ -26,7 +26,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
     COV = np.eye(D-1)
     # -----------------------
 
-    output_path = f"output/norm_all/scene_{scene}"
+    output_path = f"output/test/scene_{scene}"
     os.makedirs(output_path, exist_ok=True)
 
     pipeline.data_generation(output_path=output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV, drop_w=drop_w, drop_data=drop_data)
@@ -109,8 +109,8 @@ def run_pipeline():
     #pipeline.execute_pipeline()
     #pipeline.pipeline = []
 
-    #run_scene(pipeline, 3, D=21, drop_data=0.5)
-    #pipeline.execute_pipeline()
+    run_scene(pipeline, 3, D=21, drop_data=0.5)
+    pipeline.execute_pipeline()
 
 if __name__ == "__main__":
     run_pipeline()

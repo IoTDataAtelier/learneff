@@ -7,7 +7,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import networkx as nx
 
 
-def save_dataset_avro(X, y, w, output_path, filename="synthetic_dataset.avro"):
+def save_dataset_avro(X, y, w, output_path, filename="synthetic_dataset.avro", X_original = None, dp = None):
     """
     Save dataset (X, y) into an Avro file and weights into a NumPy .npy file.
 
@@ -35,6 +35,14 @@ def save_dataset_avro(X, y, w, output_path, filename="synthetic_dataset.avro"):
         {"features": X[i].tolist(), "target": float(y[i])}
         for i in range(len(y))
     ]
+
+    if dp != None:
+        schema["fields"].append({"name": "features_without_drop", "type": {"type": "array", "items": "double"}})
+        
+        for i in range(len(y)):
+            records[i]["features_without_drop"] = X_original[i].tolist()
+            
+        np.save(os.path.join(output_path, "dropped_columns.npy"), dp)
 
     # Save Avro dataset
     filepath = os.path.join(output_path, filename)
