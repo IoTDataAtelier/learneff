@@ -14,7 +14,7 @@ from classes.normalization import MinMaxNorm
 
 from pipeline_builder import PipelineBuilder
 
-def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop_data = None):
+def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, drop_w = None, drop_data = None):
     
     # ---- Variable config ----
     N = 100          # number of samples
@@ -26,7 +26,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, D: int, drop_w = None, drop
     COV = np.eye(D-1)
     # -----------------------
 
-    output_path = f"output/test/scene_{scene}"
+    output_path = f"{initial_path}/scene_{scene}"
     os.makedirs(output_path, exist_ok=True)
 
     pipeline.data_generation(output_path=output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV, drop_w=drop_w, drop_data=drop_data)
@@ -100,16 +100,18 @@ def run_pipeline():
     pipeline = PipelineBuilder(state)
     
     #run_all(pipeline)
-    
-    run_scene(pipeline, 1, D=11)
+    initial_path = "output/test"
+
+    run_scene(pipeline, 1, initial_path, D=11)
     pipeline.execute_pipeline()
     pipeline.pipeline = []
 
-    run_scene(pipeline, 2, D=11, drop_w=0.5)
+    run_scene(pipeline, 2, initial_path, D=11, drop_w=0.5)
     pipeline.execute_pipeline()
     pipeline.pipeline = []
 
-    run_scene(pipeline, 3, D=21, drop_data=0.5)
+    run_scene(pipeline, 3, initial_path, D=21, drop_data=0.5)
+    pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100)
     pipeline.execute_pipeline()
 
 if __name__ == "__main__":
