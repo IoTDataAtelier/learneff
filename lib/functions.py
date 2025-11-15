@@ -157,6 +157,30 @@ def plot_AUC(t: int, Wt: np.ndarray, AUC: float, output_path:str):
     fig.savefig(fname)
     plt.close()
 
+def plot_error_train_val(partial_filepath: str, scenes: list, T: int):
+
+    fig, ax = plt.subplots()
+    ax.set_ylabel("Error", fontsize=18, labelpad=12)
+    ax.set_xlabel("Epochs", fontsize=18, labelpad=12)
+
+    epochs = range(0, T)
+
+    for s in scenes:
+        train_error = np.load(os.path.join(partial_filepath, f"scene_{s}/train_errors.npy"))
+        val_error = np.load(os.path.join(partial_filepath, f"scene_{s}/validation_errors.npy"))
+
+        ax.plot(epochs, train_error, label = f"train_sc{s}")
+        ax.plot(epochs, val_error, label = f"val_sc{s}")
+
+    ax.set_xticks(epochs)
+    #ax.set_ylim(bottom=0)
+    ax.set_xlim(left=0, right=T-1)
+    ax.legend(loc="lower left", bbox_to_anchor=(1, 0))
+
+    fname = os.path.join(partial_filepath, f"errors.png")
+    fig.savefig(fname)
+    plt.close()
+
 def save_graph(G, output_path, start_epoch, last_epoch):
     fname = os.path.join(output_path, f"graph_{start_epoch}_{last_epoch}.gml")
     nx.write_gml(G, fname)
