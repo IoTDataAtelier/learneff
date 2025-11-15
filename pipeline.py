@@ -38,7 +38,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
     pipeline.normalize_data(norm_f = MinMaxNorm(), norm_state = "W")
 
     #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation(), "cossine": Cosine(), "icc": ICC()}
-    corr_weights = {"cross_correlation": CrossCorrelation()}
+    corr_weights = {"cross_correlation": CrossCorrelation(), "icc": ICC()}
 
     for n, c in corr_weights.items():
         graphs_state = f"graphs_{n}"
