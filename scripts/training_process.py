@@ -81,7 +81,7 @@ def training_process(output_path: str,
     # --- Save results ---
     np.save(os.path.join(output_path, "weights_over_time.npy"), W)
     np.save(os.path.join(output_path, "train_errors.npy"), e_train)
-    np.save(os.path.join(output_path, "test_errors.npy"), e_test)
+    np.save(os.path.join(output_path, "validation_errors.npy"), e_test)
 
     # Return only W for graph generation step
     return W

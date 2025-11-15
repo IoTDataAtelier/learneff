@@ -10,7 +10,7 @@ from scripts.components_AUC import graph_components_AUC, AUC_interpolation
 # -----------------------
 
 #---- Experiment Plots ----
-from lib.functions import plot_graph_destruction_heatmap
+from lib.functions import plot_graph_destruction_heatmap, plot_error_train_val
 # -----------------------
 
 #---- Auxiliar Classes ---
@@ -97,6 +97,14 @@ class PipelineBuilder(BaseClass):
         self.set_attributes(kwargs)
         #self.pipeline.append(step)
         pass
+
+    def plot_train_val(self, partial_filepath: str, scenes: list, T: int):
+        step = (
+            "Plot Train and Validation Errors",
+            lambda: plot_error_train_val(partial_filepath=partial_filepath, scenes=scenes, T=T)
+        )
+        self.pipeline.append(step)
+        
 
     def normalize_data(self, norm_f: NormalizationStrategy, norm_state: str):
         step = (

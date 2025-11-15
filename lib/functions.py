@@ -157,6 +157,41 @@ def plot_AUC(t: int, Wt: np.ndarray, AUC: float, output_path:str):
     fig.savefig(fname)
     plt.close()
 
+def plot_error_train_val(partial_filepath: str, scenes: list, T: int):
+
+    fig, ax = plt.subplots(figsize = (8, 4))
+    ax.set_ylabel("Error")
+    ax.set_xlabel("Epochs")
+
+    epochs = range(1, T + 1)
+    colors = cm._colormaps['tab10'].colors[:len(scenes)]
+
+    i = 0
+    for s in scenes:
+        train_error = np.load(os.path.join(partial_filepath, f"scene_{s}/train_errors.npy"))
+        val_error = np.load(os.path.join(partial_filepath, f"scene_{s}/validation_errors.npy"))
+
+        ax.plot(epochs, train_error, label = f"train_sc{s}", color=colors[i], marker='o', markevery=5)
+        ax.plot(epochs, val_error, label = f"val_sc{s}", color=colors[i], marker='D', markevery=5)
+
+        i += 1
+
+    x_ticks = range(0, T + 1, 10)
+    ax.set_xticks(x_ticks)
+    ax.set_xticklabels([f"{x}" for x in x_ticks])
+    
+    #ax.set_ylim(bottom=0)
+    ax.set_xlim(left=0, right=T)
+
+    ax.set_title("Train and Validation Error")
+
+    ax.legend(loc="lower left", bbox_to_anchor=(1, 0))
+    fig.tight_layout()
+
+    fname = os.path.join(partial_filepath, f"errors.png")
+    fig.savefig(fname)
+    plt.close()
+
 def save_graph(G, output_path, start_epoch, last_epoch):
     fname = os.path.join(output_path, f"graph_{start_epoch}_{last_epoch}.gml")
     nx.write_gml(G, fname)
