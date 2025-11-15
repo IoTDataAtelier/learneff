@@ -105,9 +105,9 @@ def run_pipeline():
     pipeline.execute_pipeline()
     pipeline.pipeline = []
 
-    #run_scene(pipeline, 2, D=11, drop_w=0.5)
-    #pipeline.execute_pipeline()
-    #pipeline.pipeline = []
+    run_scene(pipeline, 2, D=11, drop_w=0.5)
+    pipeline.execute_pipeline()
+    pipeline.pipeline = []
 
     run_scene(pipeline, 3, D=21, drop_data=0.5)
     pipeline.execute_pipeline()
