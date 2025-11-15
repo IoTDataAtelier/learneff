@@ -159,9 +159,9 @@ def plot_AUC(t: int, Wt: np.ndarray, AUC: float, output_path:str):
 
 def plot_error_train_val(partial_filepath: str, scenes: list, T: int):
 
-    fig, ax = plt.subplots()
-    ax.set_ylabel("Error", fontsize=18, labelpad=12)
-    ax.set_xlabel("Epochs", fontsize=18, labelpad=12)
+    fig, ax = plt.subplots(figsize = (8, 4))
+    ax.set_ylabel("Error")
+    ax.set_xlabel("Epochs")
 
     epochs = range(0, T)
 
@@ -176,6 +176,7 @@ def plot_error_train_val(partial_filepath: str, scenes: list, T: int):
     #ax.set_ylim(bottom=0)
     ax.set_xlim(left=0, right=T-1)
     ax.legend(loc="lower left", bbox_to_anchor=(1, 0))
+    fig.tight_layout()
 
     fname = os.path.join(partial_filepath, f"errors.png")
     fig.savefig(fname)
