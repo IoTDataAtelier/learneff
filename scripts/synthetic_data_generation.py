@@ -17,13 +17,12 @@ import random
 #    noise = noise_level * np.random.randn(X.shape[0], 1)
 #    return X @ w + noise
 
-def data_drop(X, w, drop_rate):
+def data_drop(X, drop_rate):
     size = X.shape[1]
     dp = random.sample(range(1, size), int((size - 1) * drop_rate))
     X_del = np.delete(X, dp, axis = 1)
-    w_del = np.delete(w, dp, axis = 0)
 
-    return X_del, w_del
+    return X_del, dp
 
 def synthetic_data_generation(output_path: str, 
                               f_theta: DataGenerationStrategy, 
@@ -39,9 +38,9 @@ def synthetic_data_generation(output_path: str,
     y = g_lambda.gen(X = X, w = w, noise_level = noise)
 
     if drop_data != None:
-        X_del, w_del = data_drop(X=X, w=w, drop_rate=drop_data)
-        filepath = save_dataset_avro(X, y, w, output_path)
+        X_del, dp = data_drop(X=X, drop_rate=drop_data)
+        filepath = save_dataset_avro(X=X_del, y=y, w=w, output_path=output_path, X_original=X, dp=dp)
     else:
-        filepath = save_dataset_avro(X, y, w, output_path)
+        filepath = save_dataset_avro(X=X, y=y, w=w, output_path=output_path)
 
     return filepath, w
