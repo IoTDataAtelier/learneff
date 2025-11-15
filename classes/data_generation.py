@@ -57,16 +57,10 @@ class RandomColumnVector(DataGenerationStrategy):
     
 class LinearPlusNoise(DataGenerationStrategy):
 
-    def gen(self, drop = None, **kwargs):
+    def gen(self, **kwargs):
         self.set_attributes(kwargs)
 
         noise = self.noise_level * np.random.randn(self.X.shape[0], 1)
         y = self.X @ self.w + noise
 
-        if drop != None:
-            size = self.X.shape[1]
-            dp = random.sample(range(1, size), int((size - 1) * drop))
-            self.X = np.delete(self.X, dp, axis = 1)
-            self.w = np.delete(self.w, dp, axis = 0)
-
-        return self.X, self.w, y
+        return y
