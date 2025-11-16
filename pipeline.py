@@ -37,6 +37,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
     pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
     pipeline.normalize_data(norm_f = MinMaxNorm(), norm_state = "W")
 
+    time_windows = list(range(0, T - S_W + 1, M))
     #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation(), "cossine": Cosine(), "icc": ICC()}
     corr_weights = {"cross_correlation": CrossCorrelation(), "pearson": Pearson()}
 
@@ -51,9 +52,11 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         graphs_output = f"{corr_output}/graph"
         plots_output = f"{corr_output}/data"
         AUC_output = f"{plots_output}/AUC"
+        CDF_output = f"{plots_output}/CDF"
 
         os.makedirs(graphs_output, exist_ok=True)
         os.makedirs(AUC_output, exist_ok=True)
+        os.makedirs(CDF_output, exist_ok=True)
 
         if n == "cross_correlation":
             norm = MinMaxNorm()
@@ -61,9 +64,9 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
             norm = None
 
         pipeline.graph_generation(q=Pairwise(), corr=c, S_w=S_W, M=M, graphs_state=graphs_state, output_path=graphs_output, norm_f=norm)
-        pipeline.plot_CDF(graphs_state=graphs_state, output_path=corr_output)
+        pipeline.plot_CDF(graphs_state=graphs_state, time_windows=time_windows, output_path=CDF_output)
         pipeline.graph_destruction(graphs_state=graphs_state, n_components_state=n_components_state, W_sorted_state=W_sorted_state, output_path=plots_output)
-        pipeline.plot_destruction_AUC(time_windows=list(range(0, T - S_W + 1, M)), W_sorted_state=W_sorted_state, output_path=AUC_output, norm_f=MinMaxNorm())
+        pipeline.plot_destruction_AUC(time_windows=time_windows, W_sorted_state=W_sorted_state, output_path=AUC_output, norm_f=MinMaxNorm())
         pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, n_components_state=n_components_state, output_path=plots_output)
 
 

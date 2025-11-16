@@ -193,34 +193,36 @@ def plot_error_train_val(partial_filepath: str, scenes: list, T: int):
     fig.savefig(fname)
     plt.close()
 
-def plot_weight_CDF(G: list, output_path:str):
-    fig, ax = plt.subplots()
+def plot_weight_CDF(G: list, output_path:str, time_windows: list):
 
-    graph = G[0]
-    obtain_weights = lambda e : e[2]["weight"]
-    edges = graph.edges(data=True)
-    weights = np.array(list(map(obtain_weights, edges)))
+    for i in range(0, len(G)):
+        fig, ax = plt.subplots()
 
-    mean = np.mean(weights)
-    std = np.std(weights)
-    dx = 1e-5
+        graph = G[i]
+        obtain_weights = lambda e : e[2]["weight"]
+        edges = graph.edges(data=True)
+        weights = np.array(list(map(obtain_weights, edges)))
 
-    # Generate Bins
-    a = mean - 3 * std
-    b = mean + 3 * std
-    n = round((b - a)/dx)
-    xs = np.linspace(a, b, n)
-    
-    ax.plot(xs, st.norm.cdf(xs, loc=mean, scale=std))
+        mean = np.mean(weights)
+        std = np.std(weights)
+        dx = 1e-5
 
-    ax.axvline(mean, color='k', linestyle='dashed', linewidth=2)
-    ax.set_xlabel("weights")
-    ax.set_ylabel("P(weights <= x)")
-    plt.title("Graph Weight's CDF")
+        # Generate Bins
+        a = mean - 3 * std
+        b = mean + 3 * std
+        n = round((b - a)/dx)
+        xs = np.linspace(a, b, n)
+        
+        ax.plot(xs, st.norm.cdf(xs, loc=mean, scale=std))
 
-    fname = os.path.join(output_path, f"cdf.png")
-    fig.savefig(fname)
-    plt.close()
+        ax.axvline(mean, color='k', linestyle='dashed', linewidth=2)
+        ax.set_xlabel("weights")
+        ax.set_ylabel("P(weights <= x)")
+        plt.title(f"Graph Weight's CDF, Time Window = {time_windows[i]}")
+
+        fname = os.path.join(output_path, f"cdf_{time_windows[i]}.png")
+        fig.savefig(fname)
+        plt.close()
 
 
 def save_graph(G, output_path, start_epoch, last_epoch):

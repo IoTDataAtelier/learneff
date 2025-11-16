@@ -93,10 +93,10 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def plot_CDF(self, output_path:str, graphs_state ="graphs"):
+    def plot_CDF(self, time_windows:list, output_path:str, graphs_state ="graphs"):
         step = (
             "Plot Train and Validation Errors",
-            lambda: plot_weight_CDF(output_path=output_path, G=self.state[graphs_state])
+            lambda: plot_weight_CDF(output_path=output_path, G=self.state[graphs_state], time_windows=time_windows)
         )
         self.pipeline.append(step)
 
