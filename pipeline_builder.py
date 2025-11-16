@@ -10,7 +10,7 @@ from scripts.components_AUC import graph_components_AUC, AUC_interpolation
 # -----------------------
 
 #---- Experiment Plots ----
-from lib.functions import plot_graph_destruction_heatmap, plot_error_train_val
+from lib.functions import plot_graph_destruction_heatmap, plot_error_train_val, plot_weight_CDF
 # -----------------------
 
 #---- Auxiliar Classes ---
@@ -93,10 +93,12 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def plot_CDF(self, **kwargs):
-        self.set_attributes(kwargs)
-        #self.pipeline.append(step)
-        pass
+    def plot_CDF(self, time_windows:list, output_path:str, graphs_state ="graphs"):
+        step = (
+            "Plot Train and Validation Errors",
+            lambda: plot_weight_CDF(output_path=output_path, G=self.state[graphs_state], time_windows=time_windows)
+        )
+        self.pipeline.append(step)
 
     def plot_train_val(self, partial_filepath: str, scenes: list, T: int):
         step = (
