@@ -54,13 +54,16 @@ class RandomColumnVector(DataGenerationStrategy):
                 w[i] = 0
 
         return w
+
+import scipy.stats as st
     
 class LinearPlusNoise(DataGenerationStrategy):
 
     def gen(self, **kwargs):
         self.set_attributes(kwargs)
-
-        noise = self.noise_level * np.random.randn(self.X.shape[0], 1)
+        n = self.X.shape[0]
+        noise =st.norm.rvs(loc=0, scale=self.noise_level, size=n)
+        noise = np.array([noise]).T
         y = self.X @ self.w + noise
 
         return y

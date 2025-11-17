@@ -53,7 +53,13 @@ class Cosine(AssociationStrategy):
     def eval(self, **kwargs):
         self.set_attributes(kwargs)
 
-        c = np.dot(self.x, self.y) / (norm(self.x) * norm(self.y))
+        norm_x = norm(self.x) 
+        norm_y = norm(self.y)
+
+        if norm_x == 0 or norm_y == 0:
+            return 0
+
+        c = np.dot(self.x, self.y) / (norm_x * norm_y)
         return c
     
 class ICC(AssociationStrategy):
