@@ -48,6 +48,7 @@ def AUC_interpolation(W_sorted: np.ndarray, time_windows: list, output_path:str,
 
         if min_x != max_x:
             tx = np.arange(min_x, max_x, delta)
+            tx = np.append(tx, max_x)
 
             f = it.interp1d(x.flatten(), y.flatten(), kind="nearest")
             ty = f(tx)
