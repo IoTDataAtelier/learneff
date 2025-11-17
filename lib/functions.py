@@ -126,7 +126,7 @@ def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T:
 def plot_AUC(t: int, x, y, AUC: float, output_path:str):
     fig, ax = plt.subplots()
     
-    ax.plot(x, y, color='green', marker='o', linestyle='solid')
+    ax.plot(x, y, color='green', marker='o', markeredgecolor='black', markeredgewidth=1, linestyle='solid')
 
     #x_axis = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
     #y_bins = 5

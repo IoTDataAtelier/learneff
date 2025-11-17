@@ -27,7 +27,7 @@ def graph_components_AUC(W_sorted: np.ndarray, time_windows: list, output_path:s
     np.save(os.path.join(output_path, "graph_partial_AUC.npy"), AUC)
     print(AUC_total)
 
-def AUC_interpolation(W_sorted: np.ndarray, time_windows: list, output_path:str, norm_f: NormalizationStrategy, norm_x:bool, delta=0.001):
+def AUC_interpolation(W_sorted: np.ndarray, time_windows: list, output_path:str, norm_f: NormalizationStrategy, norm_x:bool, delta=0.01):
     areas = []
     #curves = []
     
