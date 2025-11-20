@@ -66,4 +66,4 @@ class LinearPlusNoise(DataGenerationStrategy):
         noise = np.array([noise]).T
         y = self.X @ self.w + noise
 
-        return y
+        return y, noise

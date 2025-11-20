@@ -108,7 +108,7 @@ def run_pipeline():
     pipeline = PipelineBuilder(state)
     
     #run_all(pipeline)
-    initial_path = "output/val_train_plots"
+    initial_path = "output/store_noise"
 
     run_scene(pipeline, 1, initial_path, D=11)
     pipeline.execute_pipeline()

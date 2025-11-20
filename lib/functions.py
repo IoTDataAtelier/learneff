@@ -8,7 +8,7 @@ import networkx as nx
 import scipy.stats as st
 
 
-def save_dataset_avro(X, y, w, output_path, filename="synthetic_dataset.avro", X_original = None, dp = None):
+def save_dataset_avro(X, y, w, noise_data, output_path, filename="synthetic_dataset.avro", X_original = None, dp = None):
     """
     Save dataset (X, y) into an Avro file and weights into a NumPy .npy file.
 
@@ -28,12 +28,13 @@ def save_dataset_avro(X, y, w, output_path, filename="synthetic_dataset.avro", X
         "fields": [
             {"name": "features", "type": {"type": "array", "items": "double"}},
             {"name": "target", "type": "double"},
+            {"name": "noise", "type": "double"},
         ],
     }
 
     # Prepare records for Avro
     records = [
-        {"features": X[i].tolist(), "target": float(y[i])}
+        {"features": X[i].tolist(), "target": float(y[i]), "noise": float(noise_data[i])}
         for i in range(len(y))
     ]
 
