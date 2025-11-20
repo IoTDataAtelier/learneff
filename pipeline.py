@@ -51,7 +51,9 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
 
         corr_output = f"{output_path}/{n}"
         graphs_output = f"{corr_output}/graph"
-        data_output = f"{corr_output}/destruction_data"
+        data_output = f"{corr_output}/data"
+        destruction_output = f"{data_output}/destruction_data"
+        AUC_data_output = f"{data_output}/AUC"
         plots_output = f"{corr_output}/plots"
         AUC_output = f"{plots_output}/AUC"
         CDF_output = f"{plots_output}/CDF"
@@ -60,6 +62,8 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         os.makedirs(AUC_output, exist_ok=True)
         os.makedirs(CDF_output, exist_ok=True)
         os.makedirs(data_output, exist_ok=True)
+        os.makedirs(destruction_output, exist_ok=True)
+        os.makedirs(AUC_data_output, exist_ok=True)
 
         if n == "cross_correlation":
             norm = MinMaxNorm()
@@ -70,12 +74,20 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         pipeline.plot_CDF(graphs_state=graphs_state, time_windows=time_windows, output_path=CDF_output)
         
         for i in range(0, len(time_windows)):
-            pipeline.graph_destruction(graphs_state=graphs_state, filter=np.arange(0.1, 1.01, 0.1), i=i, t=time_windows[i], x_state=x_state, y_state=y_state, output_path=data_output)
+            pipeline.graph_destruction(graphs_state=graphs_state, filter=np.arange(0.1, 1.01, 0.1), i=i, t=time_windows[i], x_state=x_state, y_state=y_state, output_path=destruction_output)
             
         pipeline.normalize_data(norm_f=MinMaxNorm(), norm_state=y_state, per_line=True)
 
-        pipeline.plot_destruction_AUC(time_windows=time_windows, output_path=AUC_output, norm_f=MinMaxNorm())
-        #pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, n_components_state=n_components_state, output_path=plots_output)
+        for i in range(0, len(time_windows)):
+            t = time_windows[i]
+            pipeline.calculate_AUC(t=t, output_path=AUC_data_output, x_state=x_state, y_state=y_state, i=i)
+
+            #x = np.load(os.path.join(AUC_data_output, f"graph_AUC_weights_{t}.npy"))
+            #y = np.load(os.path.join(AUC_data_output, f"graph_AUC_components_{t}.npy"))
+
+            # plot AUC
+        
+        #pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, output_path=plots_output)
 
 
 # def run_all(pipeline: PipelineBuilder):

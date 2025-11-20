@@ -7,7 +7,7 @@ from scripts.synthetic_data_generation import synthetic_data_generation
 from scripts.training_process import training_process
 from scripts.graph_generation import generate_graphs
 from scripts.graph_destruction import graph_edge_destruction, edge_destruction
-from scripts.components_AUC import graph_components_AUC, AUC_interpolation 
+from scripts.components_AUC import graph_components_AUC, AUC_interpolation, AUC_plus_interpolation 
 # -----------------------
 
 #---- Experiment Plots ----
@@ -84,12 +84,12 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def plot_destruction_AUC(self, output_path: str, time_windows: list, norm_f: NormalizationStrategy, norm_x = False, W_sorted_state = "W_sorted", curves_state = "curves"):
+    def calculate_AUC(self, output_path: str, x_state: str, y_state: str, t: int, i: int):
         step = (
-                "Plot Graph Components + AUC",
+                f"Interpolation and AUC for Time Window {t}",
                 lambda: self.state.update( 
-                    {curves_state:AUC_interpolation(
-                    W_sorted=self.state[W_sorted_state], time_windows=time_windows, output_path=output_path, norm_f=norm_f, norm_x=norm_x
+                    {"AUC": AUC_plus_interpolation(
+                    x=self.state[x_state][i], y=self.state[y_state][i], t=t, output_path=output_path, 
                 )}
             )
         )
