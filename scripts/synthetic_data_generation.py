@@ -35,12 +35,12 @@ def synthetic_data_generation(output_path: str,
                               ):
     X = f_theta.gen(N = N, D = D, cov = cov)
     w = r_omega.gen(D = D, drop = drop_w)
-    y = g_lambda.gen(X = X, w = w, noise_level = noise)
+    y, noise_data = g_lambda.gen(X = X, w = w, noise_level = noise)
 
     if drop_data != None:
         X_del, dp = data_drop(X=X, drop_rate=drop_data)
-        filepath = save_dataset_avro(X=X_del, y=y, w=w, output_path=output_path, X_original=X, dp=dp)
+        filepath = save_dataset_avro(X=X_del, y=y, w=w, noise_data=noise_data, output_path=output_path, X_original=X, dp=dp)
     else:
-        filepath = save_dataset_avro(X=X, y=y, w=w, output_path=output_path)
+        filepath = save_dataset_avro(X=X, y=y, w=w, noise_data=noise_data, output_path=output_path)
 
     return filepath, w
