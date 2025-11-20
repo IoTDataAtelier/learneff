@@ -100,10 +100,10 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def plot_train_val(self, partial_filepath: str, scenes: list, T: int):
+    def plot_train_val(self, partial_filepath: str, scenes: list, T: int, output_path: str):
         step = (
             "Plot Train and Validation Errors",
-            lambda: plot_error_train_val(partial_filepath=partial_filepath, scenes=scenes, T=T)
+            lambda: plot_error_train_val(partial_filepath=partial_filepath, scenes=scenes, T=T, output_path=output_path)
         )
         self.pipeline.append(step)
         

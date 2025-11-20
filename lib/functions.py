@@ -146,7 +146,7 @@ def plot_AUC(t: list, x:list, y:list, x_label:str, y_label:str, analysis_type:st
     fig.savefig(fname)
     plt.close()
 
-def plot_error_train_val(partial_filepath: str, scenes: list, T: int):
+def plot_error_train_val(partial_filepath: str, scenes: list, T: int, output_path:str):
 
     fig, ax = plt.subplots(figsize = (8, 4))
     ax.set_ylabel("Error")
@@ -177,7 +177,7 @@ def plot_error_train_val(partial_filepath: str, scenes: list, T: int):
     ax.legend(loc="lower left", bbox_to_anchor=(1, 0))
     fig.tight_layout()
 
-    fname = os.path.join(partial_filepath, f"errors.png")
+    fname = os.path.join(output_path, f"errors.png")
     fig.savefig(fname)
     plt.close()
 

@@ -36,9 +36,10 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
     
     pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
     pipeline.normalize_data(norm_f = MinMaxNorm(), norm_state = "W")
+    pipeline.plot_train_val(partial_filepath=initial_path, scenes=[scene], T=T, output_path=output_path)
 
     time_windows = list(range(0, T - S_W + 1, M))
-    #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation(), "cossine": Cosine(), "icc": ICC()}
+    #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation(), "cosine": Cosine(), "icc": ICC()}
     corr_weights = {"cross_correlation": CrossCorrelation(), "pearson": Pearson(), "icc": ICC()}
 
     for n, c in corr_weights.items():
@@ -102,7 +103,7 @@ def run_pipeline():
     pipeline = PipelineBuilder(state)
     
     #run_all(pipeline)
-    initial_path = "output/test_5"
+    initial_path = "output/val_train_plots"
 
     run_scene(pipeline, 1, initial_path, D=11)
     pipeline.execute_pipeline()
@@ -113,7 +114,7 @@ def run_pipeline():
     pipeline.pipeline = []
 
     run_scene(pipeline, 3, initial_path, D=21, drop_data=0.5)
-    pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100)
+    pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100, output_path=initial_path)
     pipeline.execute_pipeline()
 
 if __name__ == "__main__":

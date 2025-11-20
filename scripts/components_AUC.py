@@ -54,13 +54,13 @@ def AUC_interpolation(W_sorted: np.ndarray, time_windows: list, output_path:str,
             ty = f(tx)
             AUC_partial = sum(ty)
             #curves.append(ty)
-            plot_AUC(time_windows[t], tx, ty, AUC_partial, output_path) # Vizualize the result
+            plot_AUC(t=[time_windows[t]], x = [tx], y = [ty], output_path=output_path, x_label="a", y_label="b", analysis_type="c") # Vizualize the result
         elif min_x != 1:
             pass
         else:
             AUC_partial = 0
             #curves.append(y.flatten())
-            plot_AUC(time_windows[t], x, y, AUC_partial, output_path) # Vizualize the result
+            plot_AUC(t=[time_windows[t]], x = [x], y = [y], output_path=output_path, x_label="a", y_label="b", analysis_type="c") # Vizualize the result
         
         areas.append(AUC_partial)
 
