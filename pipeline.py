@@ -19,7 +19,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
     # ---- Variable config ----
     N = 100          # number of samples
     T = 100          # number of epochs
-    LR = 0.0001        # learning rate
+    LR = 0.001        # learning rate
     NOISE = 20     # noise level
     S_W = 5         # sliding window size for graphs
     M = 2            # stride between windows
@@ -66,39 +66,40 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
 
         pipeline.graph_generation(q=Pairwise(), corr=c, S_w=S_W, M=M, graphs_state=graphs_state, output_path=graphs_output, norm_f=norm)
         pipeline.plot_CDF(graphs_state=graphs_state, time_windows=time_windows, output_path=CDF_output)
-        pipeline.graph_destruction(graphs_state=graphs_state, n_components_state=n_components_state, W_sorted_state=W_sorted_state, output_path=plots_output)
+        #pipeline.graph_destruction(graphs_state=graphs_state, n_components_state=n_components_state, W_sorted_state=W_sorted_state, output_path=plots_output)
+        pipeline.graph_destruction(graphs_state=graphs_state, filter=np.arange(0.1, 1.01, 0.1), output_path=plots_output, time_windows=time_windows)
         pipeline.plot_destruction_AUC(time_windows=time_windows, W_sorted_state=W_sorted_state, output_path=AUC_output, norm_f=MinMaxNorm())
         pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, n_components_state=n_components_state, output_path=plots_output)
 
 
-def run_all(pipeline: PipelineBuilder):
+# def run_all(pipeline: PipelineBuilder):
 
-    # ---- Variable config ----
-    D = 10           # number of features
-    N = 100          # number of samples
-    T = 100          # number of epochs
-    LR = 0.01        # learning rate
-    NOISE = 0.7      # noise level
-    S_W = 10         # sliding window size for graphs
-    M = 5            # stride between windows
-    COV = np.eye(D-1)
-    # -----------------------
+#     # ---- Variable config ----
+#     D = 10           # number of features
+#     N = 100          # number of samples
+#     T = 100          # number of epochs
+#     LR = 0.01        # learning rate
+#     NOISE = 0.7      # noise level
+#     S_W = 10         # sliding window size for graphs
+#     M = 5            # stride between windows
+#     COV = np.eye(D-1)
+#     # -----------------------
 
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    experiment_dir = f"experiment_{timestamp}"
-    output_path = f"output/{experiment_dir}"
-    os.makedirs(output_path, exist_ok=True)
-    os.makedirs(f"{output_path}/graph", exist_ok=True)
+#     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+#     experiment_dir = f"experiment_{timestamp}"
+#     output_path = f"output/{experiment_dir}"
+#     os.makedirs(output_path, exist_ok=True)
+#     os.makedirs(f"{output_path}/graph", exist_ok=True)
 
-    pipeline.data_generation(output_path=output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV)
-    pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
-    pipeline.graph_generation(output_path=f"{output_path}/graph", q=Pairwise(), corr=Kendall(), S_w=S_W, M=M)
-    pipeline.graph_destruction(output_path=output_path)
-    pipeline.plot_destruction_heatmap(output_path=output_path, T=T, S_w=S_W, M=M)
-    pipeline.plot_destruction_AUC(output_path=output_path, time_windows=list(range(0, T - S_W + 1, M)))
+#     pipeline.data_generation(output_path=output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV)
+#     pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
+#     pipeline.graph_generation(output_path=f"{output_path}/graph", q=Pairwise(), corr=Kendall(), S_w=S_W, M=M)
+#     pipeline.graph_destruction(output_path=output_path)
+#     pipeline.plot_destruction_heatmap(output_path=output_path, T=T, S_w=S_W, M=M)
+#     pipeline.plot_destruction_AUC(output_path=output_path, time_windows=list(range(0, T - S_W + 1, M)))
 
 def run_pipeline():
-    state = {"filepath": "", "w_true": None, "W": None, "graphs": None, "n_components": None, "W_sorted": None}
+    state = {"filepath": "", "w_true": None, "W": None, "graphs": None, "x": [], "y": []}
 
     pipeline = PipelineBuilder(state)
     

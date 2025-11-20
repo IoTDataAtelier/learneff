@@ -34,7 +34,7 @@ def graph_edge_destruction(G: list, output_path:str):
     
     return n_components, W_sorted
 
-def edge_destruction(G:nx.graph, filter:list, output_path:str, t:int):
+def edge_destruction(G:nx.graph, filter:np.ndarray, output_path:str, t:int, xt:list, yt:list):
     x = np.zeros(G.number_of_edges()) # Store the sorted edge weights
     y = np.zeros(G.number_of_edges()) # Store the number of components based o xi weight
 
@@ -63,3 +63,8 @@ def edge_destruction(G:nx.graph, filter:list, output_path:str, t:int):
 
     np.save(os.path.join(output_path, f"graph_{t}_weights.npy"), x)
     np.save(os.path.join(output_path, f"graph_{t}_components.npy"), y)
+
+    xt.append(x)
+    yt.append(y)
+
+    return xt, yt

@@ -1,11 +1,12 @@
 from classes.base_class import BaseClass
 from lib.logger import success
+import numpy as np
 
 #---- Experiment Scripts ----
 from scripts.synthetic_data_generation import synthetic_data_generation
 from scripts.training_process import training_process
 from scripts.graph_generation import generate_graphs
-from scripts.graph_destruction import graph_edge_destruction
+from scripts.graph_destruction import graph_edge_destruction, edge_destruction
 from scripts.components_AUC import graph_components_AUC, AUC_interpolation 
 # -----------------------
 
@@ -62,16 +63,18 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def graph_destruction(self, output_path:str, graphs_state ="graphs", n_components_state = "n_components", W_sorted_state = "W_sorted"):
-        step = (
-            "Graph Edge Destruction",
-            lambda: self.state.update(dict(zip(
-                [n_components_state, W_sorted_state], 
-                graph_edge_destruction(G=self.state[graphs_state], output_path=output_path))
-                )
-            ),
-        )
-        self.pipeline.append(step)
+    def graph_destruction(self, output_path:str, filter:np.ndarray, time_windows: list, graphs_state ="graphs"):
+        for i in range(0, len(time_windows)):
+            step = (
+                f"Graph Edge Destruction for Time Window {time_windows[i]}",
+                lambda: self.state.update(dict(zip(
+                    ["x", "y"], 
+                    edge_destruction(G=self.state[graphs_state][i], filter=filter, output_path=output_path, t=time_windows[i], xt=self.state["x"], yt=self.state["y"]))
+                    )
+                ),
+            )
+            self.pipeline.append(step)
+            
 
     def plot_destruction_heatmap(self, output_path: str, T: int, S_w: int, M: int, n_components_state = "n_components"):
         step = (
