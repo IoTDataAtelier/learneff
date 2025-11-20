@@ -63,13 +63,12 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def graph_destruction(self, output_path:str, filter:np.ndarray, time_windows: list, graphs_state ="graphs"):
-        for i in range(0, len(time_windows)):
+    def graph_destruction(self, output_path:str, filter:np.ndarray, i:int, t:int, x_state:str, y_state:str, graphs_state ="graphs"):
             step = (
-                f"Graph Edge Destruction for Time Window {time_windows[i]}",
+                f"Graph Edge Destruction for Time Window {t}",
                 lambda: self.state.update(dict(zip(
-                    ["x", "y"], 
-                    edge_destruction(G=self.state[graphs_state][i], filter=filter, output_path=output_path, t=time_windows[i], xt=self.state["x"], yt=self.state["y"]))
+                    [x_state, y_state], 
+                    edge_destruction(G=self.state[graphs_state][i], filter=filter, output_path=output_path, t=t, xt=self.state[x_state], yt=self.state[y_state]))
                     )
                 ),
             )

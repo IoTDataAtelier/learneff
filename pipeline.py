@@ -44,10 +44,10 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
 
     for n, c in corr_weights.items():
         graphs_state = f"graphs_{n}"
-        n_components_state = f"n_components_{n}"
-        W_sorted_state = f"W_sorted_{n}"
+        x_state = f"x_{n}"
+        y_state = f"y_{n}"
 
-        pipeline.state.update({f"{graphs_state}": None, f"{n_components_state}": None, f"{W_sorted_state}": None})
+        pipeline.state.update({f"{graphs_state}": None, f"{x_state}": [], f"{y_state}": []})
 
         corr_output = f"{output_path}/{n}"
         graphs_output = f"{corr_output}/graph"
@@ -67,9 +67,11 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         pipeline.graph_generation(q=Pairwise(), corr=c, S_w=S_W, M=M, graphs_state=graphs_state, output_path=graphs_output, norm_f=norm)
         pipeline.plot_CDF(graphs_state=graphs_state, time_windows=time_windows, output_path=CDF_output)
         #pipeline.graph_destruction(graphs_state=graphs_state, n_components_state=n_components_state, W_sorted_state=W_sorted_state, output_path=plots_output)
-        pipeline.graph_destruction(graphs_state=graphs_state, filter=np.arange(0.1, 1.01, 0.1), output_path=plots_output, time_windows=time_windows)
-        pipeline.plot_destruction_AUC(time_windows=time_windows, W_sorted_state=W_sorted_state, output_path=AUC_output, norm_f=MinMaxNorm())
-        pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, n_components_state=n_components_state, output_path=plots_output)
+        
+        for i in range(0, len(time_windows)):
+            pipeline.graph_destruction(graphs_state=graphs_state, filter=np.arange(0.1, 1.01, 0.1), i=i, t=time_windows[i], x_state=x_state, y_state=y_state, output_path=plots_output)
+        #pipeline.plot_destruction_AUC(time_windows=time_windows, W_sorted_state=W_sorted_state, output_path=AUC_output, norm_f=MinMaxNorm())
+        #pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, n_components_state=n_components_state, output_path=plots_output)
 
 
 # def run_all(pipeline: PipelineBuilder):
@@ -99,7 +101,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
 #     pipeline.plot_destruction_AUC(output_path=output_path, time_windows=list(range(0, T - S_W + 1, M)))
 
 def run_pipeline():
-    state = {"filepath": "", "w_true": None, "W": None, "graphs": None, "x": [], "y": []}
+    state = {"filepath": "", "w_true": None, "W": None, "graphs": None}
 
     pipeline = PipelineBuilder(state)
     
