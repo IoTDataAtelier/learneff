@@ -145,7 +145,7 @@ def plot_AUC(time_window: int, t: list, x_label:str, y_label:str, analysis_type:
 
     fig.tight_layout()
 
-    fname = os.path.join(output_path, f"graph_AUC_{t}.png")
+    fname = os.path.join(output_path, f"graph_AUC_{time_window}.png")
     fig.savefig(fname)
     plt.close()
 

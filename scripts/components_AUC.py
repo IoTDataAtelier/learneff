@@ -80,7 +80,7 @@ def AUC_plus_interpolation(x: np.ndarray, y: np.ndarray, t:int, output_path:str,
 
             f = it.interp1d(x.flatten(), y.flatten(), kind="nearest")
             ty = f(tx)
-            AUC = sum(ty)/100
+            AUC = sum(ty * delta)
     else:
         tx = []
         ty = []
