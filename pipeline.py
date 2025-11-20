@@ -51,13 +51,15 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
 
         corr_output = f"{output_path}/{n}"
         graphs_output = f"{corr_output}/graph"
-        plots_output = f"{corr_output}/data"
+        data_output = f"{corr_output}/destruction_data"
+        plots_output = f"{corr_output}/plots"
         AUC_output = f"{plots_output}/AUC"
         CDF_output = f"{plots_output}/CDF"
 
         os.makedirs(graphs_output, exist_ok=True)
         os.makedirs(AUC_output, exist_ok=True)
         os.makedirs(CDF_output, exist_ok=True)
+        os.makedirs(data_output, exist_ok=True)
 
         if n == "cross_correlation":
             norm = MinMaxNorm()
@@ -69,7 +71,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         #pipeline.graph_destruction(graphs_state=graphs_state, n_components_state=n_components_state, W_sorted_state=W_sorted_state, output_path=plots_output)
         
         for i in range(0, len(time_windows)):
-            pipeline.graph_destruction(graphs_state=graphs_state, filter=np.arange(0.1, 1.01, 0.1), i=i, t=time_windows[i], x_state=x_state, y_state=y_state, output_path=plots_output)
+            pipeline.graph_destruction(graphs_state=graphs_state, filter=np.arange(0.1, 1.01, 0.1), i=i, t=time_windows[i], x_state=x_state, y_state=y_state, output_path=data_output)
         #pipeline.plot_destruction_AUC(time_windows=time_windows, W_sorted_state=W_sorted_state, output_path=AUC_output, norm_f=MinMaxNorm())
         #pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, n_components_state=n_components_state, output_path=plots_output)
 
