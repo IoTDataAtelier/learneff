@@ -8,7 +8,7 @@ from classes.error_function import MeanSquaredError
 from classes.model import Linear
 from classes.algorithm import Newton, GradientDescent
 from classes.graph_gen import Pairwise
-from classes.weight_association import Pearson, Spearman, Kendall, CrossCorrelation, Cosine, ICC
+from classes.weight_association import Pearson, CrossCorrelation, Cosine, ICC
 from classes.normalization import MinMaxNorm
 # -----------------------
 
@@ -40,7 +40,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
 
     time_windows = list(range(0, T - S_W + 1, M))
     #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation(), "cosine": Cosine(), "icc": ICC()}
-    corr_weights = {"cross_correlation": CrossCorrelation(), "pearson": Pearson(), "icc": ICC()}
+    corr_weights = {"cross_correlation": CrossCorrelation(), "pearson": Pearson(), "icc": ICC(), "cosine": Cosine()}
 
     for n, c in corr_weights.items():
         graphs_state = f"graphs_{n}"
@@ -81,11 +81,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         for i in range(0, len(time_windows)):
             t = time_windows[i]
             pipeline.calculate_AUC(t=t, output_path=AUC_data_output, x_state=x_state, y_state=y_state, i=i)
-
-            #x = np.load(os.path.join(AUC_data_output, f"graph_AUC_weights_{t}.npy"))
-            #y = np.load(os.path.join(AUC_data_output, f"graph_AUC_components_{t}.npy"))
-
-            # plot AUC
+            pipeline.plot_AUC(t=[i], x_label="Normalized Edge Weight", y_label="Normalized Number of Components", analysis_type="Time Window", output_path=AUC_output, AUC_data_output=AUC_data_output)
         
         #pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, output_path=plots_output)
 

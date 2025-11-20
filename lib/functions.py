@@ -124,11 +124,13 @@ def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T:
     fig.savefig(fname)
     plt.close()
 
-def plot_AUC(t: list, x:list, y:list, x_label:str, y_label:str, analysis_type:str, output_path:str):
+def plot_AUC(time_window: int, t: list, x_label:str, y_label:str, analysis_type:str, AUC_data_output: str, output_path:str):
     fig, ax = plt.subplots()
     
     for i in range(0, len(t)):
-        ax.plot(x[i], y[i], marker='o', markeredgecolor='black', markeredgewidth=1, linestyle='solid')
+        x = np.load(os.path.join(AUC_data_output, f"graph_AUC_weights_{i}.npy"))
+        y = np.load(os.path.join(AUC_data_output, f"graph_AUC_components_{i}.npy"))
+        ax.plot(x, y, marker='o', markeredgecolor='black', markeredgewidth=1, linestyle='solid')
 
     ax.set_ylim(bottom=0, top=1)
     ax.set_xlim(left=0, right=1)
@@ -136,7 +138,7 @@ def plot_AUC(t: list, x:list, y:list, x_label:str, y_label:str, analysis_type:st
     ax.set_ylabel(y_label)
         
     if len(t) == 1:
-        ax.set_title(f"{analysis_type} = {t}")
+        ax.set_title(f"Analysis for fixed {analysis_type} = {time_window}")
     else:
         ax.set_title(f"Analysis for fixed {analysis_type}")
         ax.legend(t)
