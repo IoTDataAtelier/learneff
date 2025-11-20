@@ -74,7 +74,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
             
         pipeline.normalize_data(norm_f=MinMaxNorm(), norm_state=y_state, per_line=True)
 
-        #pipeline.plot_destruction_AUC(time_windows=time_windows, W_sorted_state=W_sorted_state, output_path=AUC_output, norm_f=MinMaxNorm())
+        pipeline.plot_destruction_AUC(time_windows=time_windows, output_path=AUC_output, norm_f=MinMaxNorm())
         #pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, n_components_state=n_components_state, output_path=plots_output)
 
 

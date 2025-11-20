@@ -68,3 +68,19 @@ def AUC_interpolation(W_sorted: np.ndarray, time_windows: list, output_path:str,
     print(sum(areas))
     
     #return np.array(curves).T
+
+def AUC_plus_interpolation(x: np.ndarray, y: np.ndarray, t:int, output_path:str, delta=0.01):
+    min_x = min(x)
+    max_x = max(x)
+
+    if min_x != max_x:
+            tx = np.arange(min_x, max_x, delta)
+            tx = np.append(tx, max_x)
+
+            f = it.interp1d(x.flatten(), y.flatten(), kind="nearest")
+            ty = f(tx)
+    else:
+        pass
+
+    np.save(os.path.join(output_path, f"graph_AUC_weights_{t}.npy"), tx)
+    np.save(os.path.join(output_path, f"graph_AUC_components_{t}.npy"), ty)
