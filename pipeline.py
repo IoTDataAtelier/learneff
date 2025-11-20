@@ -19,8 +19,8 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
     # ---- Variable config ----
     N = 100          # number of samples
     T = 100          # number of epochs
-    LR = 1e-5        # learning rate
-    NOISE = 1.0      # noise level
+    LR = 0.0001        # learning rate
+    NOISE = 20     # noise level
     S_W = 5         # sliding window size for graphs
     M = 2            # stride between windows
     COV = np.eye(D-1)
@@ -39,7 +39,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
 
     time_windows = list(range(0, T - S_W + 1, M))
     #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation(), "cossine": Cosine(), "icc": ICC()}
-    corr_weights = {"cross_correlation": CrossCorrelation(), "pearson": Pearson()}
+    corr_weights = {"cross_correlation": CrossCorrelation(), "pearson": Pearson(), "icc": ICC()}
 
     for n, c in corr_weights.items():
         graphs_state = f"graphs_{n}"
@@ -102,19 +102,19 @@ def run_pipeline():
     pipeline = PipelineBuilder(state)
     
     #run_all(pipeline)
-    initial_path = "output/test_3"
+    initial_path = "output/test_5"
 
     run_scene(pipeline, 1, initial_path, D=11)
     pipeline.execute_pipeline()
-    #pipeline.pipeline = []
+    pipeline.pipeline = []
 
-    #run_scene(pipeline, 2, initial_path, D=11, drop_w=0.5)
-    #pipeline.execute_pipeline()
-    #pipeline.pipeline = []
+    run_scene(pipeline, 2, initial_path, D=11, drop_w=0.5)
+    pipeline.execute_pipeline()
+    pipeline.pipeline = []
 
-    #run_scene(pipeline, 3, initial_path, D=21, drop_data=0.5)
-    #pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100)
-    #pipeline.execute_pipeline()
+    run_scene(pipeline, 3, initial_path, D=21, drop_data=0.5)
+    pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100)
+    pipeline.execute_pipeline()
 
 if __name__ == "__main__":
     run_pipeline()

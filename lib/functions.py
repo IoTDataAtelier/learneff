@@ -123,35 +123,23 @@ def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T:
     fig.savefig(fname)
     plt.close()
 
-def plot_AUC(t: int, Wt: np.ndarray, AUC: float, output_path:str):
+def plot_AUC(t: list, x:list, y:list, x_label:str, y_label:str, analysis_type:str, output_path:str):
     fig, ax = plt.subplots()
-
-    n_weights = len(Wt)
-    x = np.zeros(n_weights)
-    y = np.zeros(n_weights)
     
-    for i in range(0, n_weights):
-        x[i] = Wt[i][0]
-        y[i] = Wt[i][1]
-    
-    ax.plot(x, y, color='green', marker='o', linestyle='solid')
+    for i in range(0, len(t)):
+        ax.plot(x[i], y[i], marker='o', markeredgecolor='black', markeredgewidth=1, linestyle='solid')
 
-    x_axis = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
-    y_bins = 5
+    ax.set_ylim(bottom=0, top=1)
+    ax.set_xlim(left=0, right=1)
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+        
+    if len(t) == 1:
+        ax.set_title(f"{analysis_type} = {t}")
+    else:
+        ax.set_title(f"Analysis for fixed {analysis_type}")
+        ax.legend(t)
 
-    x_ticks = np.linspace(0, max(x), len(x_axis))
-    y_ticks = np.linspace(1, max(y), y_bins)
-
-    ax.set_xticks(x_ticks)
-    ax.set_xticklabels([f"{x}" for x in x_axis])
-
-    ax.set_yticks(y_ticks)
-    ax.set_yticklabels(y_ticks)
-
-    ax.set_xlabel("Edge Weight")
-    ax.set_ylabel("Number of Components")
-
-    ax.set_title(f"Time Window = {t}, AUC = {AUC:.4f}")
     fig.tight_layout()
 
     fname = os.path.join(output_path, f"graph_AUC_{t}.png")
