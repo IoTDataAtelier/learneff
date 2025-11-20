@@ -110,11 +110,11 @@ class PipelineBuilder(BaseClass):
         self.pipeline.append(step)
         
 
-    def normalize_data(self, norm_f: NormalizationStrategy, norm_state: str):
+    def normalize_data(self, norm_f: NormalizationStrategy, norm_state: str, per_line:bool = False):
         step = (
             f"Normalize data from {norm_state}",
             lambda: self.state.update(
-                {norm_state: norm_f.norm(x = self.state[norm_state] 
+                {norm_state: norm_f.norm(x = self.state[norm_state], per_line=per_line 
                 )}
             ),
         )

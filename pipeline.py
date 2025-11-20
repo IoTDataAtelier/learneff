@@ -68,10 +68,12 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
 
         pipeline.graph_generation(q=Pairwise(), corr=c, S_w=S_W, M=M, graphs_state=graphs_state, output_path=graphs_output, norm_f=norm)
         pipeline.plot_CDF(graphs_state=graphs_state, time_windows=time_windows, output_path=CDF_output)
-        #pipeline.graph_destruction(graphs_state=graphs_state, n_components_state=n_components_state, W_sorted_state=W_sorted_state, output_path=plots_output)
         
         for i in range(0, len(time_windows)):
             pipeline.graph_destruction(graphs_state=graphs_state, filter=np.arange(0.1, 1.01, 0.1), i=i, t=time_windows[i], x_state=x_state, y_state=y_state, output_path=data_output)
+            
+        pipeline.normalize_data(norm_f=MinMaxNorm(), norm_state=y_state, per_line=True)
+
         #pipeline.plot_destruction_AUC(time_windows=time_windows, W_sorted_state=W_sorted_state, output_path=AUC_output, norm_f=MinMaxNorm())
         #pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, n_components_state=n_components_state, output_path=plots_output)
 
@@ -108,7 +110,7 @@ def run_pipeline():
     pipeline = PipelineBuilder(state)
     
     #run_all(pipeline)
-    initial_path = "output/store_noise"
+    initial_path = "output/norm"
 
     run_scene(pipeline, 1, initial_path, D=11)
     pipeline.execute_pipeline()

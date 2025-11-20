@@ -13,7 +13,7 @@ def normalize_weights(G: nx.Graph, norm_f: NormalizationStrategy):
     edges = G.edges(data=True)
     weights = np.array(list(map(obtain_weights, edges)))
     weights = weights.reshape(-1, 1)
-    weights = norm_f.norm(x = weights)
+    weights = norm_f.norm(x = weights, per_line = False)
     weights = weights.flatten()
 
     i = 0

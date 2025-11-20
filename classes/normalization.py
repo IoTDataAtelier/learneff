@@ -17,6 +17,13 @@ class MinMaxNorm(NormalizationStrategy):
         self.set_attributes(kwargs)
 
         scaler = MinMaxScaler(feature_range=(0, 1))
-        self.x = scaler.fit_transform(self.x)
+
+        if self.per_line == False:
+            self.x = scaler.fit_transform(self.x)
+        else:
+            for i in range(0, len(self.x)):
+                xi = self.x[i].reshape(-1, 1)
+                self.x[i] = scaler.fit_transform(xi)
+                self.x[i] = self.x[i].flatten() 
 
         return self.x
