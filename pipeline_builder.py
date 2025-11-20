@@ -1,11 +1,12 @@
 from classes.base_class import BaseClass
 from lib.logger import success
+import numpy as np
 
 #---- Experiment Scripts ----
 from scripts.synthetic_data_generation import synthetic_data_generation
 from scripts.training_process import training_process
 from scripts.graph_generation import generate_graphs
-from scripts.graph_destruction import graph_edge_destruction
+from scripts.graph_destruction import graph_edge_destruction, edge_destruction
 from scripts.components_AUC import graph_components_AUC, AUC_interpolation 
 # -----------------------
 
@@ -62,16 +63,17 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def graph_destruction(self, output_path:str, graphs_state ="graphs", n_components_state = "n_components", W_sorted_state = "W_sorted"):
-        step = (
-            "Graph Edge Destruction",
-            lambda: self.state.update(dict(zip(
-                [n_components_state, W_sorted_state], 
-                graph_edge_destruction(G=self.state[graphs_state], output_path=output_path))
-                )
-            ),
-        )
-        self.pipeline.append(step)
+    def graph_destruction(self, output_path:str, filter:np.ndarray, i:int, t:int, x_state:str, y_state:str, graphs_state ="graphs"):
+            step = (
+                f"Graph Edge Destruction for Time Window {t}",
+                lambda: self.state.update(dict(zip(
+                    [x_state, y_state], 
+                    edge_destruction(G=self.state[graphs_state][i], filter=filter, output_path=output_path, t=t, xt=self.state[x_state], yt=self.state[y_state]))
+                    )
+                ),
+            )
+            self.pipeline.append(step)
+            
 
     def plot_destruction_heatmap(self, output_path: str, T: int, S_w: int, M: int, n_components_state = "n_components"):
         step = (
@@ -100,10 +102,10 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def plot_train_val(self, partial_filepath: str, scenes: list, T: int):
+    def plot_train_val(self, partial_filepath: str, scenes: list, T: int, output_path: str):
         step = (
             "Plot Train and Validation Errors",
-            lambda: plot_error_train_val(partial_filepath=partial_filepath, scenes=scenes, T=T)
+            lambda: plot_error_train_val(partial_filepath=partial_filepath, scenes=scenes, T=T, output_path=output_path)
         )
         self.pipeline.append(step)
         
