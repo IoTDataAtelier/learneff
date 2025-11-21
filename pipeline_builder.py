@@ -95,10 +95,10 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def plot_AUC(self, time_window:list, x_label:str, y_label:str, analysis_type:str, output_path: str, AUC_data_output: str):
+    def plot_AUC(self, time_window:list, x_label:str, y_label:str, analysis_type:str, output_path: str, AUC_data_output: str, AUC_state: str, t: list):
         step = (
             "Plot AUC",
-            lambda: plot_AUC(time_window=time_window, x_label=x_label, y_label=y_label, analysis_type=analysis_type, output_path=output_path, AUC_data_output=AUC_data_output)
+            lambda: plot_AUC(time_window=time_window, x_label=x_label, y_label=y_label, analysis_type=analysis_type, AUC=self.state[AUC_state], t=t, output_path=output_path, AUC_data_output=AUC_data_output)
         )
         self.pipeline.append(step)
 

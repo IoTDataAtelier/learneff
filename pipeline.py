@@ -43,6 +43,12 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
     corr_weights = {"pearson": Pearson(), "cross_correlation": CrossCorrelation(), "cosine": Cosine(), "icc": ICC()}
     #corr_weights = {"icc": ICC()}
 
+    #------------------------------------------
+    #
+    # FIXED TIME WINDOW EXPERIMENT
+    #
+    #------------------------------------------
+
     for n, c in corr_weights.items():
         graphs_state = f"graphs_{n}"
         x_state = f"x_{n}"
@@ -83,36 +89,59 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         for i in range(0, len(time_windows)):
             t = time_windows[i]
             pipeline.calculate_AUC(t=t, output_path=AUC_data_output, x_state=x_state, y_state=y_state, AUC_state=AUC_state, i=i)
-            pipeline.plot_AUC(time_window=[t], x_label="Normalized Edge Weight", y_label="Normalized Number of Components", analysis_type="Time Window, Iteration", output_path=AUC_output, AUC_data_output=AUC_data_output)
+            pipeline.plot_AUC(time_window=[t], x_label="Normalized Edge Weight", y_label="Normalized Number of Components", analysis_type="Time Window, Iteration", AUC_state=AUC_state, t=[i], output_path=AUC_output, AUC_data_output=AUC_data_output)
         
         pipeline.plot_destruction_heatmap(time_windows=time_windows, x_label="Iterations", AUC_data_output=AUC_data_output, output_path=plots_output)
 
+    #------------------------------------------
+    #
+    # FIXED ITERATION EXPERIMENT
+    #
+    #------------------------------------------
 
-# def run_all(pipeline: PipelineBuilder):
+    # for n, c in corr_weights.items():
+    #     graphs_state = f"graphs_{n}"
+    #     x_state = f"x_{n}"
+    #     y_state = f"y_{n}"
+    #     AUC_state = f"AUC_{n}"
 
-#     # ---- Variable config ----
-#     D = 10           # number of features
-#     N = 100          # number of samples
-#     T = 100          # number of epochs
-#     LR = 0.01        # learning rate
-#     NOISE = 0.7      # noise level
-#     S_W = 10         # sliding window size for graphs
-#     M = 5            # stride between windows
-#     COV = np.eye(D-1)
-#     # -----------------------
+    #     pipeline.state.update({f"{graphs_state}": None, f"{x_state}": [], f"{y_state}": [], f"{AUC_state}": []})
 
-#     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-#     experiment_dir = f"experiment_{timestamp}"
-#     output_path = f"output/{experiment_dir}"
-#     os.makedirs(output_path, exist_ok=True)
-#     os.makedirs(f"{output_path}/graph", exist_ok=True)
+    #     corr_output = f"{output_path}/{n}/fixed_iteration"
+    #     graphs_output = f"{corr_output}/graph"
+    #     data_output = f"{corr_output}/data"
+    #     destruction_output = f"{data_output}/destruction_data"
+    #     AUC_data_output = f"{data_output}/AUC"
+    #     plots_output = f"{corr_output}/plots"
+    #     AUC_output = f"{plots_output}/AUC"
+    #     CDF_output = f"{plots_output}/CDF"
 
-#     pipeline.data_generation(output_path=output_path, f_theta=MultivariateGaussian(), r_omega=RandomColumnVector(), g_lambda=LinearPlusNoise(), N=N, D=D, noise=NOISE, cov=COV)
-#     pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
-#     pipeline.graph_generation(output_path=f"{output_path}/graph", q=Pairwise(), corr=Kendall(), S_w=S_W, M=M)
-#     pipeline.graph_destruction(output_path=output_path)
-#     pipeline.plot_destruction_heatmap(output_path=output_path, T=T, S_w=S_W, M=M)
-#     pipeline.plot_destruction_AUC(output_path=output_path, time_windows=list(range(0, T - S_W + 1, M)))
+    #     os.makedirs(graphs_output, exist_ok=True)
+    #     os.makedirs(AUC_output, exist_ok=True)
+    #     os.makedirs(CDF_output, exist_ok=True)
+    #     os.makedirs(data_output, exist_ok=True)
+    #     os.makedirs(destruction_output, exist_ok=True)
+    #     os.makedirs(AUC_data_output, exist_ok=True)
+
+    #     if n == "cross_correlation":
+    #         norm = MinMaxNorm()
+    #     else:
+    #         norm = None
+
+    #     pipeline.graph_generation(q=Pairwise(), corr=c, S_w=S_W, M=M, graphs_state=graphs_state, output_path=graphs_output, norm_f=norm)
+    #     pipeline.plot_CDF(graphs_state=graphs_state, time_windows=time_windows, output_path=CDF_output)
+        
+    #     for i in range(0, len(time_windows)):
+    #         pipeline.graph_destruction(graphs_state=graphs_state, filter=filter, i=i, t=time_windows[i], x_state=x_state, y_state=y_state, output_path=destruction_output)
+            
+    #     pipeline.normalize_data(norm_f=MinMaxNorm(), norm_state=y_state, per_line=True)
+
+    #     for i in range(0, len(time_windows)):
+    #         t = time_windows[i]
+    #         pipeline.calculate_AUC(t=t, output_path=AUC_data_output, x_state=x_state, y_state=y_state, AUC_state=AUC_state, i=i)
+    #         pipeline.plot_AUC(time_window=[t], x_label="Normalized Edge Weight", y_label="Normalized Number of Components", analysis_type="Time Window, Iteration", AUC_state=AUC_state, t=[i], output_path=AUC_output, AUC_data_output=AUC_data_output)
+        
+    #     pipeline.plot_destruction_heatmap(time_windows=time_windows, x_label="Iterations", AUC_data_output=AUC_data_output, output_path=plots_output)
 
 def run_pipeline():
     state = {"filepath": "", "w_true": None, "W": None, "graphs": None}
