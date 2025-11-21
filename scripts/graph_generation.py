@@ -8,6 +8,12 @@ from classes.normalization import NormalizationStrategy
 
 from lib.functions import plot_graph, save_graph
 
+def remove_zero_weights(G: nx.Graph):
+    for u, v in G.edges:
+        if G[u][v]["weight"] == 0.0:
+            G.remove_edge(u, v)
+    return G
+
 def normalize_weights(G: nx.Graph, norm_f: NormalizationStrategy):
     obtain_weights = lambda e : e[2]["weight"]
     edges = G.edges(data=True)
@@ -35,6 +41,7 @@ def generate_graphs(W: np.ndarray, output_path: str, q: GraphGenerationStrategy,
         if norm_f != None:
             G = normalize_weights(G=G, norm_f=norm_f)
 
+        G = remove_zero_weights(G)
         graphs.append(G)
 
         # --- Plot the graph ---

@@ -24,6 +24,8 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
     S_W = 5         # sliding window size for graphs
     M = 2            # stride between windows
     COV = np.eye(D-1)
+    time_windows = list(range(0, T - S_W + 1, M))
+    filter = np.arange(0.0, 1.01, 0.1)
     # -----------------------
 
     output_path = f"{initial_path}/scene_{scene}"
@@ -38,7 +40,6 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
     pipeline.normalize_data(norm_f = MinMaxNorm(), norm_state = "W")
     pipeline.plot_train_val(partial_filepath=initial_path, scenes=[scene], T=T, output_path=output_path)
 
-    time_windows = list(range(0, T - S_W + 1, M))
     #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation(), "cosine": Cosine(), "icc": ICC()}
     corr_weights = {"cross_correlation": CrossCorrelation()}
 
@@ -75,7 +76,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         pipeline.plot_CDF(graphs_state=graphs_state, time_windows=time_windows, output_path=CDF_output)
         
         for i in range(0, len(time_windows)):
-            pipeline.graph_destruction(graphs_state=graphs_state, filter=np.arange(0.1, 1.01, 0.1), i=i, t=time_windows[i], x_state=x_state, y_state=y_state, output_path=destruction_output)
+            pipeline.graph_destruction(graphs_state=graphs_state, filter=filter, i=i, t=time_windows[i], x_state=x_state, y_state=y_state, output_path=destruction_output)
             
         pipeline.normalize_data(norm_f=MinMaxNorm(), norm_state=y_state, per_line=True)
 
@@ -119,7 +120,7 @@ def run_pipeline():
     pipeline = PipelineBuilder(state)
     
     #run_all(pipeline)
-    initial_path = "output/testando"
+    initial_path = "output/testando_2"
 
     run_scene(pipeline, 1, initial_path, D=11)
     pipeline.execute_pipeline()

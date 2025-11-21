@@ -76,7 +76,8 @@ def AUC_plus_interpolation(x: np.ndarray, y: np.ndarray, t:int, output_path:str,
 
     if min_x != max_x:
             tx = np.arange(min_x, max_x, delta)
-            tx = np.append(tx, max_x)
+            if tx[-1] != 1.0:
+                tx = np.append(tx, max_x)
 
             f = it.interp1d(x.flatten(), y.flatten(), kind="nearest")
             ty = f(tx)
