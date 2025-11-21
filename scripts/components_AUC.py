@@ -75,16 +75,24 @@ def AUC_plus_interpolation(x: np.ndarray, y: np.ndarray, t:int, output_path:str,
     AUC = 0
 
     if min_x != max_x:
-            tx = np.arange(min_x, max_x, delta)
-            if tx[-1] != 1.0:
-                tx = np.append(tx, max_x)
+        tx = np.arange(min_x, max_x, delta)
+        quantity = int(1/delta - len(tx))
 
-            f = it.interp1d(x.flatten(), y.flatten(), kind="nearest")
-            ty = f(tx)
-            AUC = sum(ty * delta)
+        if tx[-1] < max_x and quantity > 0:
+            tx = np.append(tx, max_x)
+            quantity -= 1
+
+        f = it.interp1d(x.flatten(), y.flatten(), kind="nearest")
+        ty = f(tx)
+        
+        AUC = sum(ty * delta)
+
+        if tx[0] > 0 and quantity > 0:
+            tx = np.insert(tx, 0, np.linspace(0.0, min_x, num=quantity))
+            ty = np.insert(ty, 0, np.zeros(quantity))
     else:
-        tx = []
-        ty = []
+        tx = x
+        ty = y
 
     print(AUC)
     areas.append(AUC)

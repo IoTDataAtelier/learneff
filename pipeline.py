@@ -40,8 +40,8 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
     pipeline.normalize_data(norm_f = MinMaxNorm(), norm_state = "W")
     pipeline.plot_train_val(partial_filepath=initial_path, scenes=[scene], T=T, output_path=output_path)
 
-    #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation(), "cosine": Cosine(), "icc": ICC()}
-    corr_weights = {"cross_correlation": CrossCorrelation()}
+    corr_weights = {"pearson": Pearson(), "cross_correlation": CrossCorrelation(), "cosine": Cosine(), "icc": ICC()}
+    #corr_weights = {"cross_correlation": CrossCorrelation()}
 
     for n, c in corr_weights.items():
         graphs_state = f"graphs_{n}"
@@ -51,7 +51,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
 
         pipeline.state.update({f"{graphs_state}": None, f"{x_state}": [], f"{y_state}": [], f"{AUC_state}": []})
 
-        corr_output = f"{output_path}/{n}"
+        corr_output = f"{output_path}/{n}/fixed_window"
         graphs_output = f"{corr_output}/graph"
         data_output = f"{corr_output}/data"
         destruction_output = f"{data_output}/destruction_data"

@@ -93,14 +93,14 @@ def plot_graph_destruction_heatmap(output_path:str, time_windows:list, x_label: 
     #x_axis = list(range(0, T + 1, 10))
     #y_axis = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
 
-    fig, ax = plt.subplots(figsize=(5.7, 5.7))
+    fig, ax = plt.subplots(figsize=(0.25 * len(time_windows), 5.0))
 
     # ---- Adjust colobar size ----
     divider = make_axes_locatable(ax)
     ax_cb = divider.append_axes("right", size="5%", pad=0.05)
     fig.add_axes(ax_cb)
 
-    n_components = np.zeros((len(time_windows), 101))
+    n_components = np.zeros((len(time_windows), 100))
     for i in range(0, len(time_windows)):
         y = np.load(os.path.join(AUC_data_output, f"graph_AUC_components_{time_windows[i]}.npy"))
         n_components[i] = y
@@ -108,11 +108,11 @@ def plot_graph_destruction_heatmap(output_path:str, time_windows:list, x_label: 
     # ---- Plot heatmap ----
     im = ax.imshow(n_components.T, origin="lower", cmap=cm.Spectral_r, aspect='auto', interpolation="nearest")
 
-    #x_ticks = np.linspace(0, n_components.shape[1] - 1, len(x_axis))
+    x_ticks = np.linspace(0, n_components.shape[0] - 1, len(time_windows))
     #y_ticks = np.linspace(0, n_components.shape[0] - 1, len(y_axis))
 
-    #ax.set_xticks(time_windows)
-    #ax.set_xticklabels([f"{x}" for x in x_axis])
+    ax.set_xticks(x_ticks)
+    ax.set_xticklabels(time_windows)
 
     #ax.set_yticks(y_ticks)
     #ax.set_yticklabels([f"{y}" for y in y_axis])
