@@ -91,7 +91,7 @@ def plot_graph(G, output_path, start_epoch, last_epoch):
 
 def plot_graph_destruction_heatmap(output_path:str, time_windows:list, x_label: str, AUC_data_output: str):
     #x_axis = list(range(0, T + 1, 10))
-    #y_axis = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+    y_axis = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
 
     fig, ax = plt.subplots(figsize=(0.25 * len(time_windows), 5.0))
 
@@ -109,13 +109,13 @@ def plot_graph_destruction_heatmap(output_path:str, time_windows:list, x_label: 
     im = ax.imshow(n_components.T, origin="lower", cmap=cm.Spectral_r, aspect='auto', interpolation="nearest")
 
     x_ticks = np.linspace(0, n_components.shape[0] - 1, len(time_windows))
-    #y_ticks = np.linspace(0, n_components.shape[0] - 1, len(y_axis))
+    y_ticks = np.linspace(0, n_components.shape[1] - 1, len(y_axis))
 
     ax.set_xticks(x_ticks)
     ax.set_xticklabels(time_windows)
 
-    #ax.set_yticks(y_ticks)
-    #ax.set_yticklabels([f"{y}" for y in y_axis])
+    ax.set_yticks(y_ticks)
+    ax.set_yticklabels([f"{y}" for y in y_axis])
 
     ax.set_xlabel(x_label)
     ax.set_ylabel("Normalized Edge Weight")
@@ -153,7 +153,7 @@ def plot_AUC(time_window: list, x_label:str, y_label:str, analysis_type:str, AUC
     fig.savefig(fname)
     plt.close()
 
-def plot_error_train_val(partial_filepath: str, scenes: list, T: int, output_path:str):
+def plot_error_train_val(partial_filepath: str, scenes: list, T: int, output_path:str, val: bool, train: bool, filename: str):
 
     fig, ax = plt.subplots(figsize = (8, 4))
     ax.set_ylabel("Error")
@@ -164,11 +164,13 @@ def plot_error_train_val(partial_filepath: str, scenes: list, T: int, output_pat
 
     i = 0
     for s in scenes:
-        train_error = np.load(os.path.join(partial_filepath, f"scene_{s}/train_errors.npy"))
-        val_error = np.load(os.path.join(partial_filepath, f"scene_{s}/validation_errors.npy"))
-
-        ax.plot(epochs, train_error, label = f"train_sc{s}", color=colors[i], marker='o', markevery=5)
-        ax.plot(epochs, val_error, label = f"val_sc{s}", color=colors[i], marker='D', markevery=5)
+        if train:
+            train_error = np.load(os.path.join(partial_filepath, f"scene_{s}/train_errors.npy"))
+            ax.plot(epochs, train_error, label = f"train_sc{s}", color=colors[i], marker='o', markevery=5)
+        
+        if val:
+            val_error = np.load(os.path.join(partial_filepath, f"scene_{s}/validation_errors.npy"))
+            ax.plot(epochs, val_error, label = f"val_sc{s}", color=colors[i], marker='D', markevery=5)
 
         i += 1
 
@@ -184,7 +186,7 @@ def plot_error_train_val(partial_filepath: str, scenes: list, T: int, output_pat
     ax.legend(loc="lower left", bbox_to_anchor=(1, 0))
     fig.tight_layout()
 
-    fname = os.path.join(output_path, f"errors.png")
+    fname = os.path.join(output_path, f"{filename}.png")
     fig.savefig(fname)
     plt.close()
 

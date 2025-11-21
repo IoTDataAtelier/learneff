@@ -104,15 +104,15 @@ class PipelineBuilder(BaseClass):
 
     def plot_CDF(self, time_windows:list, output_path:str, graphs_state ="graphs"):
         step = (
-            "Plot Train and Validation Errors",
+            "Plot CDF of the graph weights",
             lambda: plot_weight_CDF(output_path=output_path, G=self.state[graphs_state], time_windows=time_windows)
         )
         self.pipeline.append(step)
 
-    def plot_train_val(self, partial_filepath: str, scenes: list, T: int, output_path: str):
+    def plot_train_val(self, partial_filepath: str, scenes: list, T: int, output_path: str, val: bool, train: bool, filename: str):
         step = (
             "Plot Train and Validation Errors",
-            lambda: plot_error_train_val(partial_filepath=partial_filepath, scenes=scenes, T=T, output_path=output_path)
+            lambda: plot_error_train_val(partial_filepath=partial_filepath, scenes=scenes, T=T, output_path=output_path, val=val, train=train, filename=filename)
         )
         self.pipeline.append(step)
         

@@ -38,10 +38,10 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
     
     pipeline.model_training(output_path=output_path, D=D, T=T, lr=LR, r_omega=RandomColumnVector(), e_phi=MeanSquaredError(), H = Linear(), a = GradientDescent())                
     pipeline.normalize_data(norm_f = MinMaxNorm(), norm_state = "W")
-    pipeline.plot_train_val(partial_filepath=initial_path, scenes=[scene], T=T, output_path=output_path)
+    pipeline.plot_train_val(partial_filepath=initial_path, scenes=[scene], T=T, output_path=output_path, val=True, train=True, filename=f"scene_{scene}_errors")
 
-    #corr_weights = {"pearson": Pearson(), "cross_correlation": CrossCorrelation(), "cosine": Cosine(), "icc": ICC()}
-    corr_weights = {"pearson": Pearson()}
+    corr_weights = {"pearson": Pearson(), "cross_correlation": CrossCorrelation(), "cosine": Cosine(), "icc": ICC()}
+    #corr_weights = {"icc": ICC()}
 
     for n, c in corr_weights.items():
         graphs_state = f"graphs_{n}"
@@ -131,7 +131,9 @@ def run_pipeline():
     pipeline.pipeline = []
 
     run_scene(pipeline, 3, initial_path, D=21, drop_data=0.5)
-    pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100, output_path=initial_path)
+    pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100, output_path=initial_path, val=True, train=False, filename="val_errors")
+    pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100, output_path=initial_path, val=False, train=True, filename="train_errors")
+    pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100, output_path=initial_path, val=True, train=True, filename="errors")
     pipeline.execute_pipeline()
 
 if __name__ == "__main__":

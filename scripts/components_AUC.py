@@ -92,9 +92,10 @@ def AUC_plus_interpolation(x: np.ndarray, y: np.ndarray, t:int, output_path:str,
         if tx[0] > 0 and quantity > 0:
             tx = np.insert(tx, 0, np.linspace(0.0, min_x, num=quantity))
             ty = np.insert(ty, 0, np.zeros(quantity))
-    else:
-        tx = x
-        ty = y
+    else: # WRONG
+        quantity = int(1/delta - len(x))
+        tx = np.insert(x, 0, np.linspace(0.0, min_x, num=quantity))
+        ty = np.insert(y, 0, np.zeros(quantity))
 
     print(AUC)
     areas.append(AUC)
