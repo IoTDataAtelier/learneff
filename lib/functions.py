@@ -129,26 +129,25 @@ def plot_graph_destruction_heatmap(output_path:str, time_windows:list, x_label: 
     fig.savefig(fname)
     plt.close()
 
-def plot_AUC(time_window: int, t: list, x_label:str, y_label:str, analysis_type:str, AUC_data_output: str, output_path:str):
+def plot_AUC(time_window: list, x_label:str, y_label:str, analysis_type:str, AUC_data_output: str, output_path:str):
     fig, ax = plt.subplots()
     
-    for i in range(0, len(t)):
-        x = np.load(os.path.join(AUC_data_output, f"graph_AUC_weights_{i}.npy"))
-        y = np.load(os.path.join(AUC_data_output, f"graph_AUC_components_{i}.npy"))
+    for i in range(0, len(time_window)):
+        x = np.load(os.path.join(AUC_data_output, f"graph_AUC_weights_{time_window[i]}.npy"))
+        y = np.load(os.path.join(AUC_data_output, f"graph_AUC_components_{time_window[i]}.npy"))
         ax.plot(x, y, marker='o', markeredgecolor='black', markeredgewidth=1, linestyle='solid')
 
     ax.set_ylim(bottom=0, top=1)
     ax.set_xlim(left=0, right=1)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
-        
-    if len(t) == 1:
-        ax.set_title(f"Analysis for fixed {analysis_type} = {time_window}")
+    fig.tight_layout()
+
+    if len(time_window) == 1:
+        ax.set_title(f"Analysis for fixed {analysis_type} = {time_window[0]}")
     else:
         ax.set_title(f"Analysis for fixed {analysis_type}")
-        ax.legend(t)
-
-    fig.tight_layout()
+        ax.legend(time_window)
 
     fname = os.path.join(output_path, f"graph_AUC_{time_window}.png")
     fig.savefig(fname)

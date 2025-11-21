@@ -83,7 +83,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         for i in range(0, len(time_windows)):
             t = time_windows[i]
             pipeline.calculate_AUC(t=t, output_path=AUC_data_output, x_state=x_state, y_state=y_state, AUC_state=AUC_state, i=i)
-            pipeline.plot_AUC(time_window=t, t=[i], x_label="Normalized Edge Weight", y_label="Normalized Number of Components", analysis_type="Time Window, Iteration", output_path=AUC_output, AUC_data_output=AUC_data_output)
+            pipeline.plot_AUC(time_window=[t], x_label="Normalized Edge Weight", y_label="Normalized Number of Components", analysis_type="Time Window, Iteration", output_path=AUC_output, AUC_data_output=AUC_data_output)
         
         pipeline.plot_destruction_heatmap(time_windows=time_windows, x_label="Iterations", AUC_data_output=AUC_data_output, output_path=plots_output)
 
