@@ -141,7 +141,6 @@ def plot_AUC(time_window: list, x_label:str, y_label:str, analysis_type:str, AUC
     ax.set_xlim(left=0, right=1)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
-    fig.tight_layout()
 
     if len(time_window) == 1:
         ax.set_title(f"Analysis for fixed {analysis_type} = {time_window[0]}")
@@ -149,6 +148,7 @@ def plot_AUC(time_window: list, x_label:str, y_label:str, analysis_type:str, AUC
         ax.set_title(f"Analysis for fixed {analysis_type}")
         ax.legend(time_window)
 
+    fig.tight_layout()
     fname = os.path.join(output_path, f"graph_AUC_{time_window}.png")
     fig.savefig(fname)
     plt.close()

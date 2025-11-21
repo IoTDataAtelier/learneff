@@ -23,7 +23,8 @@ class MinMaxNorm(NormalizationStrategy):
         else:
             for i in range(0, len(self.x)):
                 xi = self.x[i].reshape(-1, 1)
-                self.x[i] = scaler.fit_transform(xi)
-                self.x[i] = self.x[i].flatten() 
+                xi = scaler.fit_transform(xi)
+                for j in range(0, len(xi)):
+                    self.x[i][j] = xi[j]
 
         return self.x
