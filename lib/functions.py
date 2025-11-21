@@ -89,9 +89,9 @@ def plot_graph(G, output_path, start_epoch, last_epoch):
     plt.close()
 
 
-def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T: int, S_w: int, M: int):
-    x_axis = list(range(0, T + 1, 10))
-    y_axis = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+def plot_graph_destruction_heatmap(output_path:str, time_windows:list, x_label: str, AUC_data_output: str):
+    #x_axis = list(range(0, T + 1, 10))
+    #y_axis = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
 
     fig, ax = plt.subplots(figsize=(5.7, 5.7))
 
@@ -100,20 +100,25 @@ def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T:
     ax_cb = divider.append_axes("right", size="5%", pad=0.05)
     fig.add_axes(ax_cb)
 
+    n_components = np.zeros((len(time_windows), 101))
+    for i in range(0, len(time_windows)):
+        y = np.load(os.path.join(AUC_data_output, f"graph_AUC_components_{time_windows[i]}.npy"))
+        n_components[i] = y
+
     # ---- Plot heatmap ----
-    im = ax.imshow(n_components, origin="lower", cmap=cm.Spectral_r, aspect='auto', interpolation="nearest")
+    im = ax.imshow(n_components.T, origin="lower", cmap=cm.Spectral_r, aspect='auto', interpolation="nearest")
 
-    x_ticks = np.linspace(0, n_components.shape[1] - 1, len(x_axis))
-    y_ticks = np.linspace(0, n_components.shape[0] - 1, len(y_axis))
+    #x_ticks = np.linspace(0, n_components.shape[1] - 1, len(x_axis))
+    #y_ticks = np.linspace(0, n_components.shape[0] - 1, len(y_axis))
 
-    ax.set_xticks(x_ticks)
-    ax.set_xticklabels([f"{x}" for x in x_axis])
+    #ax.set_xticks(time_windows)
+    #ax.set_xticklabels([f"{x}" for x in x_axis])
 
-    ax.set_yticks(y_ticks)
-    ax.set_yticklabels([f"{y}" for y in y_axis])
+    #ax.set_yticks(y_ticks)
+    #ax.set_yticklabels([f"{y}" for y in y_axis])
 
-    ax.set_xlabel("Time Window")
-    ax.set_ylabel("Filter")
+    ax.set_xlabel(x_label)
+    ax.set_ylabel("Normalized Edge Weight")
 
     fig.colorbar(im, cax=ax_cb)
 

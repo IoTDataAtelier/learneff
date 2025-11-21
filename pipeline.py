@@ -40,14 +40,15 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
 
     time_windows = list(range(0, T - S_W + 1, M))
     #corr_weights = {"pearson": Pearson(), "spearman": Spearman(), "kendall": Kendall(), "cross_correlation": CrossCorrelation(), "cosine": Cosine(), "icc": ICC()}
-    corr_weights = {"cross_correlation": CrossCorrelation(), "pearson": Pearson(), "icc": ICC(), "cosine": Cosine()}
+    corr_weights = {"cross_correlation": CrossCorrelation()}
 
     for n, c in corr_weights.items():
         graphs_state = f"graphs_{n}"
         x_state = f"x_{n}"
         y_state = f"y_{n}"
+        AUC_state = f"AUC_{n}"
 
-        pipeline.state.update({f"{graphs_state}": None, f"{x_state}": [], f"{y_state}": []})
+        pipeline.state.update({f"{graphs_state}": None, f"{x_state}": [], f"{y_state}": [], f"{AUC_state}": []})
 
         corr_output = f"{output_path}/{n}"
         graphs_output = f"{corr_output}/graph"
@@ -80,10 +81,10 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
 
         for i in range(0, len(time_windows)):
             t = time_windows[i]
-            pipeline.calculate_AUC(t=t, output_path=AUC_data_output, x_state=x_state, y_state=y_state, i=i)
+            pipeline.calculate_AUC(t=t, output_path=AUC_data_output, x_state=x_state, y_state=y_state, AUC_state=AUC_state, i=i)
             pipeline.plot_AUC(time_window=t, t=[i], x_label="Normalized Edge Weight", y_label="Normalized Number of Components", analysis_type="Time Window, Iteration", output_path=AUC_output, AUC_data_output=AUC_data_output)
         
-        #pipeline.plot_destruction_heatmap(T=T, S_w=S_W, M=M, output_path=plots_output)
+        pipeline.plot_destruction_heatmap(time_windows=time_windows, x_label="Iterations", AUC_data_output=AUC_data_output, output_path=plots_output)
 
 
 # def run_all(pipeline: PipelineBuilder):
@@ -118,7 +119,7 @@ def run_pipeline():
     pipeline = PipelineBuilder(state)
     
     #run_all(pipeline)
-    initial_path = "output/norm"
+    initial_path = "output/testando"
 
     run_scene(pipeline, 1, initial_path, D=11)
     pipeline.execute_pipeline()

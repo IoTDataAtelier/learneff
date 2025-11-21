@@ -75,21 +75,21 @@ class PipelineBuilder(BaseClass):
             self.pipeline.append(step)
             
 
-    def plot_destruction_heatmap(self, output_path: str, T: int, S_w: int, M: int, n_components_state = "n_components"):
+    def plot_destruction_heatmap(self, output_path: str, time_windows: list, x_label: str, AUC_data_output: str):
         step = (
             "Plot Graph Destruction Heatmap",
             lambda: plot_graph_destruction_heatmap(
-                n_components=self.state[n_components_state], output_path=output_path, T=T, S_w=S_w, M=M
+                output_path=output_path, time_windows=time_windows, x_label=x_label, AUC_data_output=AUC_data_output
             )
         )
         self.pipeline.append(step)
 
-    def calculate_AUC(self, output_path: str, x_state: str, y_state: str, t: int, i: int):
+    def calculate_AUC(self, output_path: str, x_state: str, y_state: str, AUC_state:str, t: int, i: int):
         step = (
                 f"Interpolation and AUC for Time Window {t}",
                 lambda: self.state.update( 
-                    {"AUC": AUC_plus_interpolation(
-                    x=self.state[x_state][i], y=self.state[y_state][i], t=t, output_path=output_path, 
+                    {AUC_state: AUC_plus_interpolation(
+                    x=self.state[x_state][i], y=self.state[y_state][i], t=t, output_path=output_path, areas=self.state[AUC_state]
                 )}
             )
         )

@@ -69,7 +69,7 @@ def AUC_interpolation(W_sorted: np.ndarray, time_windows: list, output_path:str,
     
     #return np.array(curves).T
 
-def AUC_plus_interpolation(x: np.ndarray, y: np.ndarray, t:int, output_path:str, areas: list = [], delta=0.01):
+def AUC_plus_interpolation(x: np.ndarray, y: np.ndarray, t:int, output_path:str, areas: list, delta=0.01):
     min_x = min(x)
     max_x = max(x)
     AUC = 0
