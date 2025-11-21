@@ -11,7 +11,7 @@ from scripts.components_AUC import graph_components_AUC, AUC_interpolation, AUC_
 # -----------------------
 
 #---- Experiment Plots ----
-from lib.functions import plot_graph_destruction_heatmap, plot_error_train_val, plot_weight_CDF, plot_AUC
+from lib.functions import plot_graph_destruction_heatmap, plot_error_train_val, plot_weight_CDF, plot_AUC, save_data_npy
 # -----------------------
 
 #---- Auxiliar Classes ---
@@ -124,6 +124,13 @@ class PipelineBuilder(BaseClass):
                 {norm_state: norm_f.norm(x = self.state[norm_state], per_line=per_line 
                 )}
             ),
+        )
+        self.pipeline.append(step)
+
+    def store_state_npy(self, name_state: str, output_path: str):
+        step = (
+            f"Store values from {name_state}",
+            lambda: save_data_npy(x=self.state[name_state], output_path=output_path, filename=name_state)
         )
         self.pipeline.append(step)
 

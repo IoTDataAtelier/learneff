@@ -227,3 +227,6 @@ def plot_weight_CDF(G: list, output_path:str, time_windows: list):
 def save_graph(G, output_path, start_epoch, last_epoch):
     fname = os.path.join(output_path, f"graph_{start_epoch}_{last_epoch}.gml")
     nx.write_gml(G, fname)
+
+def save_data_npy(x, filename:str, output_path:str):
+    np.save(os.path.join(output_path, f"{filename}.npy"), x)
