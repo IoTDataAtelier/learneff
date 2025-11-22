@@ -29,7 +29,7 @@ def normalize_weights(G: nx.Graph, norm_f: NormalizationStrategy):
 
     return G
 
-def generate_graphs(W: np.ndarray, output_path: str, q: GraphGenerationStrategy, corr: AssociationStrategy, norm_f: NormalizationStrategy, S_w: int = 10, M: int = 5, min: float = -2):
+def generate_graphs(W: np.ndarray, output_path: str, q: GraphGenerationStrategy, corr: AssociationStrategy, norm_f: NormalizationStrategy, once:bool, S_w: int = 10, M: int = 5, min: float = -2):
     D, T = W.shape
     graphs = []
 
@@ -49,5 +49,8 @@ def generate_graphs(W: np.ndarray, output_path: str, q: GraphGenerationStrategy,
 
         # --- Save graph ---
         save_graph(G, output_path, t, e)
+
+        if once:
+            break
 
     return graphs

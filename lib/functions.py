@@ -93,7 +93,11 @@ def plot_graph_destruction_heatmap(output_path:str, time_windows:list, x_label: 
     #x_axis = list(range(0, T + 1, 10))
     y_axis = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
 
-    fig, ax = plt.subplots(figsize=(0.25 * len(time_windows), 5.0))
+    x_axis_len = 0.25 * len(time_windows)
+    if x_axis_len < 7:
+        x_axis_len = 7
+
+    fig, ax = plt.subplots(figsize=(x_axis_len, 5.0))
 
     # ---- Adjust colobar size ----
     divider = make_axes_locatable(ax)

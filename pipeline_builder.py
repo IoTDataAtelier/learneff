@@ -53,11 +53,11 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def graph_generation(self, output_path: str, q: GraphGenerationStrategy, corr: AssociationStrategy, S_w: int, M: int, norm_f: NormalizationStrategy = None, graphs_state = "graphs", W_state = "W"):
+    def graph_generation(self, output_path: str, q: GraphGenerationStrategy, corr: AssociationStrategy, S_w: int, M: int, norm_f: NormalizationStrategy = None, once=False, graphs_state = "graphs", W_state = "W"):
         step = (
             "Graph Generation and Graph Plot",
             lambda: self.state.update(
-                {graphs_state: generate_graphs(self.state[W_state], output_path=output_path, q=q, corr=corr, S_w=S_w, M=M, norm_f=norm_f
+                {graphs_state: generate_graphs(self.state[W_state], output_path=output_path, q=q, corr=corr, S_w=S_w, M=M, norm_f=norm_f, once=once
                 )}
             ),
         )
