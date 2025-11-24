@@ -19,7 +19,7 @@ class Newton(AlgorithmStrategy):
         wt = (1 - self.lr) * self.w + self.lr * np.linalg.inv(np.dot(self.X.T, self.X)) @ np.dot(self.X.T, self.y)
         return wt
     
-class GradientDescent(AlgorithmStrategy):
+class SteepestDescent(AlgorithmStrategy):
 
     def update(self, **kwargs):
         self.set_attributes(kwargs)

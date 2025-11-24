@@ -89,31 +89,40 @@ def plot_graph(G, output_path, start_epoch, last_epoch):
     plt.close()
 
 
-def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T: int, S_w: int, M: int):
-    x_axis = list(range(0, T + 1, 10))
+def plot_graph_destruction_heatmap(output_path:str, time_windows:list, x_label: str, AUC_data_output: str):
+    #x_axis = list(range(0, T + 1, 10))
     y_axis = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
 
-    fig, ax = plt.subplots(figsize=(5.7, 5.7))
+    x_axis_len = 0.25 * len(time_windows)
+    if x_axis_len < 7:
+        x_axis_len = 7
+
+    fig, ax = plt.subplots(figsize=(x_axis_len, 5.0))
 
     # ---- Adjust colobar size ----
     divider = make_axes_locatable(ax)
     ax_cb = divider.append_axes("right", size="5%", pad=0.05)
     fig.add_axes(ax_cb)
 
-    # ---- Plot heatmap ----
-    im = ax.imshow(n_components, origin="lower", cmap=cm.Spectral_r, aspect='auto', interpolation="nearest")
+    n_components = np.zeros((len(time_windows), 100))
+    for i in range(0, len(time_windows)):
+        y = np.load(os.path.join(AUC_data_output, f"graph_AUC_components_{time_windows[i]}.npy"))
+        n_components[i] = y
 
-    x_ticks = np.linspace(0, n_components.shape[1] - 1, len(x_axis))
-    y_ticks = np.linspace(0, n_components.shape[0] - 1, len(y_axis))
+    # ---- Plot heatmap ----
+    im = ax.imshow(n_components.T, origin="lower", cmap=cm.Spectral_r, aspect='auto', interpolation="nearest")
+
+    x_ticks = np.linspace(0, n_components.shape[0] - 1, len(time_windows))
+    y_ticks = np.linspace(0, n_components.shape[1] - 1, len(y_axis))
 
     ax.set_xticks(x_ticks)
-    ax.set_xticklabels([f"{x}" for x in x_axis])
+    ax.set_xticklabels(time_windows)
 
     ax.set_yticks(y_ticks)
     ax.set_yticklabels([f"{y}" for y in y_axis])
 
-    ax.set_xlabel("Time Window")
-    ax.set_ylabel("Filter")
+    ax.set_xlabel(x_label)
+    ax.set_ylabel("Normalized Edge Weight")
 
     fig.colorbar(im, cax=ax_cb)
 
@@ -124,30 +133,33 @@ def plot_graph_destruction_heatmap(n_components: np.ndarray, output_path:str, T:
     fig.savefig(fname)
     plt.close()
 
-def plot_AUC(t: list, x:list, y:list, x_label:str, y_label:str, analysis_type:str, output_path:str):
+def plot_AUC(time_window: list, t:list, x_label:str, y_label:str, analysis_type:str, AUC_data_output: str, AUC:list, output_path:str):
     fig, ax = plt.subplots()
     
-    for i in range(0, len(t)):
-        ax.plot(x[i], y[i], marker='o', markeredgecolor='black', markeredgewidth=1, linestyle='solid')
+    for i in range(0, len(time_window)):
+        x = np.load(os.path.join(AUC_data_output, f"graph_AUC_weights_{time_window[i]}.npy"))
+        y = np.load(os.path.join(AUC_data_output, f"graph_AUC_components_{time_window[i]}.npy"))
+        line, = ax.plot(x, y, marker='o', markeredgecolor='black', markeredgewidth=1, linestyle='solid')
 
     ax.set_ylim(bottom=0, top=1)
     ax.set_xlim(left=0, right=1)
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
-        
-    if len(t) == 1:
-        ax.set_title(f"{analysis_type} = {t}")
+
+    if len(time_window) == 1:
+        ax.set_title(f"Analysis for fixed {analysis_type} = {time_window[0]}")
+        line.set_label(f"AUC = {AUC[t[0]]}")
+        ax.legend()
     else:
         ax.set_title(f"Analysis for fixed {analysis_type}")
-        ax.legend(t)
+        ax.legend(time_window)
 
     fig.tight_layout()
-
-    fname = os.path.join(output_path, f"graph_AUC_{t}.png")
+    fname = os.path.join(output_path, f"graph_AUC_{time_window}.png")
     fig.savefig(fname)
     plt.close()
 
-def plot_error_train_val(partial_filepath: str, scenes: list, T: int, output_path:str):
+def plot_error_train_val(partial_filepath: str, scenes: list, T: int, output_path:str, val: bool, train: bool, filename: str):
 
     fig, ax = plt.subplots(figsize = (8, 4))
     ax.set_ylabel("Error")
@@ -158,11 +170,13 @@ def plot_error_train_val(partial_filepath: str, scenes: list, T: int, output_pat
 
     i = 0
     for s in scenes:
-        train_error = np.load(os.path.join(partial_filepath, f"scene_{s}/train_errors.npy"))
-        val_error = np.load(os.path.join(partial_filepath, f"scene_{s}/validation_errors.npy"))
-
-        ax.plot(epochs, train_error, label = f"train_sc{s}", color=colors[i], marker='o', markevery=5)
-        ax.plot(epochs, val_error, label = f"val_sc{s}", color=colors[i], marker='D', markevery=5)
+        if train:
+            train_error = np.load(os.path.join(partial_filepath, f"scene_{s}/train_errors.npy"))
+            ax.plot(epochs, train_error, label = f"train_sc{s}", color=colors[i], marker='o', markevery=5)
+        
+        if val:
+            val_error = np.load(os.path.join(partial_filepath, f"scene_{s}/validation_errors.npy"))
+            ax.plot(epochs, val_error, label = f"val_sc{s}", color=colors[i], marker='D', markevery=5)
 
         i += 1
 
@@ -178,7 +192,7 @@ def plot_error_train_val(partial_filepath: str, scenes: list, T: int, output_pat
     ax.legend(loc="lower left", bbox_to_anchor=(1, 0))
     fig.tight_layout()
 
-    fname = os.path.join(output_path, f"errors.png")
+    fname = os.path.join(output_path, f"{filename}.png")
     fig.savefig(fname)
     plt.close()
 
@@ -217,3 +231,6 @@ def plot_weight_CDF(G: list, output_path:str, time_windows: list):
 def save_graph(G, output_path, start_epoch, last_epoch):
     fname = os.path.join(output_path, f"graph_{start_epoch}_{last_epoch}.gml")
     nx.write_gml(G, fname)
+
+def save_data_npy(x, filename:str, output_path:str):
+    np.save(os.path.join(output_path, f"{filename}.npy"), x)

@@ -29,7 +29,6 @@ class Pairwise(GraphGenerationStrategy):
                 if type(corr) == np.ndarray:
                     corr = max(corr)
 
-                if corr > self.min:
-                    self.G.add_edge(i, j, weight=corr)
+                self.G.add_edge(i, j, weight=corr)
 
         return self.G
