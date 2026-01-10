@@ -163,17 +163,22 @@ def plot_AUC(time_window: list, x_label:str, y_label:str, analysis_type:str, AUC
 def plot_error_train_val(partial_filepath: str, scenes: list, T: int, output_path:str, val: bool, train: bool, filename: str):
 
     fig, ax = plt.subplots(figsize = (8, 4))
-    ax.set_ylabel("Error")
-    ax.set_xlabel("Epochs")
+    ax.set_ylabel("Error", fontsize=12)
+    ax.set_xlabel("Iterations", fontsize=12)
 
     epochs = range(1, T + 1)
-    colors = cm._colormaps['tab10'].colors[:len(scenes)]
+    if len(scenes) == 1:
+        colors = cm._colormaps['tab10'].colors[:2]
+    else:
+        colors = cm._colormaps['tab10'].colors[:len(scenes)]
 
     i = 0
     for s in scenes:
         if train:
             train_error = np.load(os.path.join(partial_filepath, f"scene_{s}/train_errors.npy"))
             ax.plot(epochs, train_error, label = f"train_sc{s}", color=colors[i], marker='o', markevery=5)
+            if len(scenes) == 1:
+                i += 1
         
         if val:
             val_error = np.load(os.path.join(partial_filepath, f"scene_{s}/validation_errors.npy"))
@@ -188,7 +193,7 @@ def plot_error_train_val(partial_filepath: str, scenes: list, T: int, output_pat
     #ax.set_ylim(bottom=0)
     ax.set_xlim(left=0, right=T)
 
-    ax.set_title("Train and Validation Error")
+    #ax.set_title("Train and Validation Error")
 
     ax.legend(loc="lower left", bbox_to_anchor=(1, 0))
     fig.tight_layout()

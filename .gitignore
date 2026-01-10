@@ -161,4 +161,5 @@ cython_debug/
 
 output/*
 data/preprocessed/*
+plots_remade/*
 test.ipynb

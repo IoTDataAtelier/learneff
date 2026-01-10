@@ -25,7 +25,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
     M = 2            # stride between windows
     COV = np.eye(D-1)
     time_windows = list(range(0, T - S_W + 1, M))
-    filter = np.arange(0.0, 1.00001, 0.00001)
+    filter = np.arange(0.0, 1.1, 0.1)
     # -----------------------
 
     output_path = f"{initial_path}/scene_{scene}"
