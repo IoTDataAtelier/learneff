@@ -40,8 +40,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
     pipeline.normalize_data(norm_f = MinMaxNorm(), norm_state = "W")
     pipeline.plot_train_val(partial_filepath=initial_path, scenes=[scene], T=T, output_path=output_path, val=True, train=True, filename=f"scene_{scene}_errors")
 
-    corr_weights = {"pearson": Pearson(), "cross_correlation": CrossCorrelation(), "cosine": Cosine(), "icc": ICC()}
-    #corr_weights = {"icc": ICC()}
+    corr_weights = {"pearson": Pearson(), "cross_correlation": CrossCorrelation(), "cosine": Cosine()}
 
     #------------------------------------------
     #

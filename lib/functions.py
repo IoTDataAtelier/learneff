@@ -6,7 +6,7 @@ import matplotlib.cm as cm
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import networkx as nx
 import scipy.stats as st
-
+import seaborn as sns
 
 def save_dataset_avro(X, y, w, noise_data, output_path, filename="synthetic_dataset.avro", X_original = None, dp = None):
     """
@@ -233,6 +233,8 @@ def plot_weight_CDF(G: list, output_path:str, time_windows: list):
         fig.savefig(fname)
         plt.close()
 
+def plot_cluster_map(W, t: int):
+    sns.clustermap(W)
 
 def save_graph(G, output_path, start_epoch, last_epoch):
     fname = os.path.join(output_path, f"graph_{start_epoch}_{last_epoch}.gml")
