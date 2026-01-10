@@ -75,11 +75,11 @@ class PipelineBuilder(BaseClass):
             self.pipeline.append(step)
             
 
-    def plot_destruction_heatmap(self, output_path: str, time_windows: list, x_label: str, AUC_data_output: str):
+    def plot_destruction_heatmap(self, output_path: str, time_windows: list, x_label: str, y_label:str, AUC_data_output: str):
         step = (
             "Plot Graph Destruction Heatmap",
             lambda: plot_graph_destruction_heatmap(
-                output_path=output_path, time_windows=time_windows, x_label=x_label, AUC_data_output=AUC_data_output
+                output_path=output_path, time_windows=time_windows, x_label=x_label, y_label=y_label, AUC_data_output=AUC_data_output
             )
         )
         self.pipeline.append(step)

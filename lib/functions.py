@@ -84,12 +84,12 @@ def plot_graph(G, output_path, start_epoch, last_epoch):
     plt.axis("off")
     plt.tight_layout()
 
-    fname = os.path.join(output_path, f"graph_{start_epoch}_{last_epoch}.png")
+    fname = os.path.join(output_path, f"graph_{start_epoch}_{last_epoch}.pdf")
     plt.savefig(fname)
     plt.close()
 
 
-def plot_graph_destruction_heatmap(output_path:str, time_windows:list, x_label: str, AUC_data_output: str):
+def plot_graph_destruction_heatmap(output_path:str, time_windows:list, x_label: str, y_label:str, AUC_data_output: str):
     #x_axis = list(range(0, T + 1, 10))
     y_axis = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
 
@@ -122,24 +122,25 @@ def plot_graph_destruction_heatmap(output_path:str, time_windows:list, x_label: 
     ax.set_yticklabels([f"{y}" for y in y_axis])
 
     ax.set_xlabel(x_label)
-    ax.set_ylabel("Normalized Edge Weight")
+    ax.set_ylabel(y_label)
 
     fig.colorbar(im, cax=ax_cb)
 
     ax.set_title("Number of Components")
     fig.tight_layout()
     
-    fname = os.path.join(output_path, f"graph_heatmap.png")
+    fname = os.path.join(output_path, f"graph_heatmap.pdf")
     fig.savefig(fname)
     plt.close()
 
-def plot_AUC(time_window: list, t:list, x_label:str, y_label:str, analysis_type:str, AUC_data_output: str, AUC:list, output_path:str):
+def plot_AUC(time_window: list, x_label:str, y_label:str, analysis_type:str, AUC_data_output: str, output_path:str, t:list = 0, AUC:list = []):
     fig, ax = plt.subplots()
     
     for i in range(0, len(time_window)):
         x = np.load(os.path.join(AUC_data_output, f"graph_AUC_weights_{time_window[i]}.npy"))
         y = np.load(os.path.join(AUC_data_output, f"graph_AUC_components_{time_window[i]}.npy"))
-        line, = ax.plot(x, y, marker='o', markeredgecolor='black', markeredgewidth=1, linestyle='solid')
+        #line, = ax.plot(x, y, marker='o', markeredgecolor='black', markeredgewidth=1, linestyle='solid')
+        line, = ax.plot(x, y, marker=None, linestyle='solid')
 
     ax.set_ylim(bottom=0, top=1)
     ax.set_xlim(left=0, right=1)
@@ -147,32 +148,37 @@ def plot_AUC(time_window: list, t:list, x_label:str, y_label:str, analysis_type:
     ax.set_ylabel(y_label)
 
     if len(time_window) == 1:
-        ax.set_title(f"Analysis for fixed {analysis_type} = {time_window[0]}")
+        ax.set_title(f"Analysis for Fixed {analysis_type} = {time_window[0]}")
         line.set_label(f"AUC = {AUC[t[0]]}")
         ax.legend()
     else:
-        ax.set_title(f"Analysis for fixed {analysis_type}")
+        ax.set_title(f"Analysis for Fixed {analysis_type}")
         ax.legend(time_window)
 
     fig.tight_layout()
-    fname = os.path.join(output_path, f"graph_AUC_{time_window}.png")
+    fname = os.path.join(output_path, f"graph_AUC_{time_window}.pdf")
     fig.savefig(fname)
     plt.close()
 
 def plot_error_train_val(partial_filepath: str, scenes: list, T: int, output_path:str, val: bool, train: bool, filename: str):
 
     fig, ax = plt.subplots(figsize = (8, 4))
-    ax.set_ylabel("Error")
-    ax.set_xlabel("Epochs")
+    ax.set_ylabel("Error", fontsize=12)
+    ax.set_xlabel("Iterations", fontsize=12)
 
     epochs = range(1, T + 1)
-    colors = cm._colormaps['tab10'].colors[:len(scenes)]
+    if len(scenes) == 1:
+        colors = cm._colormaps['tab10'].colors[:2]
+    else:
+        colors = cm._colormaps['tab10'].colors[:len(scenes)]
 
     i = 0
     for s in scenes:
         if train:
             train_error = np.load(os.path.join(partial_filepath, f"scene_{s}/train_errors.npy"))
             ax.plot(epochs, train_error, label = f"train_sc{s}", color=colors[i], marker='o', markevery=5)
+            if len(scenes) == 1:
+                i += 1
         
         if val:
             val_error = np.load(os.path.join(partial_filepath, f"scene_{s}/validation_errors.npy"))
@@ -187,12 +193,12 @@ def plot_error_train_val(partial_filepath: str, scenes: list, T: int, output_pat
     #ax.set_ylim(bottom=0)
     ax.set_xlim(left=0, right=T)
 
-    ax.set_title("Train and Validation Error")
+    #ax.set_title("Train and Validation Error")
 
     ax.legend(loc="lower left", bbox_to_anchor=(1, 0))
     fig.tight_layout()
 
-    fname = os.path.join(output_path, f"{filename}.png")
+    fname = os.path.join(output_path, f"{filename}.pdf")
     fig.savefig(fname)
     plt.close()
 
@@ -223,7 +229,7 @@ def plot_weight_CDF(G: list, output_path:str, time_windows: list):
         ax.set_ylabel("P(weights <= x)")
         plt.title(f"Graph Weight's CDF, Time Window = {time_windows[i]}")
 
-        fname = os.path.join(output_path, f"cdf_{time_windows[i]}.png")
+        fname = os.path.join(output_path, f"cdf_{time_windows[i]}.pdf")
         fig.savefig(fname)
         plt.close()
 

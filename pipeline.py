@@ -20,12 +20,12 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
     N = 100          # number of samples
     T = 100          # number of epochs
     LR = 0.001        # learning rate
-    NOISE = 20     # noise level
+    NOISE = 40     # noise level
     S_W = 5         # sliding window size for graphs
     M = 2            # stride between windows
     COV = np.eye(D-1)
     time_windows = list(range(0, T - S_W + 1, M))
-    filter = np.arange(0.0, 1.01, 0.1)
+    filter = np.arange(0.0, 1.1, 0.1)
     # -----------------------
 
     output_path = f"{initial_path}/scene_{scene}"
@@ -75,8 +75,10 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
 
         if n == "cross_correlation":
             norm = MinMaxNorm()
+            x_label = "Normalized Edge Weight"
         else:
             norm = None
+            x_label = "Edge Weight"
 
         pipeline.graph_generation(q=Pairwise(), corr=c, S_w=S_W, M=M, graphs_state=graphs_state, output_path=graphs_output, norm_f=norm)
         pipeline.plot_CDF(graphs_state=graphs_state, time_windows=time_windows, output_path=CDF_output)
@@ -89,10 +91,10 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         for i in range(0, len(time_windows)):
             t = time_windows[i]
             pipeline.calculate_AUC(t=t, output_path=AUC_data_output, x_state=x_state, y_state=y_state, AUC_state=AUC_state, i=i)
-            pipeline.plot_AUC(time_window=[t], x_label="Normalized Edge Weight", y_label="Normalized Number of Components", analysis_type="Time Window, Iteration", AUC_state=AUC_state, t=[i], output_path=AUC_output, AUC_data_output=AUC_data_output)
+            pipeline.plot_AUC(time_window=[t], x_label=x_label, y_label="Normalized Number of Components", analysis_type="Time Window, Iteration", AUC_state=AUC_state, t=[i], output_path=AUC_output, AUC_data_output=AUC_data_output)
         
         pipeline.store_state_npy(name_state=AUC_state, output_path=data_output)
-        pipeline.plot_destruction_heatmap(time_windows=time_windows, x_label="Iterations", AUC_data_output=AUC_data_output, output_path=plots_output)
+        pipeline.plot_destruction_heatmap(time_windows=time_windows, x_label="Iterations", y_label=x_label, AUC_data_output=AUC_data_output, output_path=plots_output)
 
     #------------------------------------------
     #
@@ -129,8 +131,10 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
 
         if n == "cross_correlation":
             norm = MinMaxNorm()
+            x_label = "Normalized Edge Weight"
         else:
             norm = None
+            x_label = "Edge Weight"
         
         for i in range(0, len(time_windows)):
             pipeline.graph_generation(q=Pairwise(), corr=c, S_w=time_windows[i], M=M, graphs_state=graphs_state, output_path=graphs_output, norm_f=norm, once=True)
@@ -142,9 +146,9 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         for i in range(0, len(time_windows)):
             t = time_windows[i]
             pipeline.calculate_AUC(t=t, output_path=AUC_data_output, x_state=x_state, y_state=y_state, AUC_state=AUC_state, i=i)
-            pipeline.plot_AUC(time_window=[t], x_label="Normalized Edge Weight", y_label="Normalized Number of Components", analysis_type="Iteration, Time Window", AUC_state=AUC_state, t=[i], output_path=AUC_output, AUC_data_output=AUC_data_output)
+            pipeline.plot_AUC(time_window=[t], x_label=x_label, y_label="Normalized Number of Components", analysis_type="Iteration, Time Window", AUC_state=AUC_state, t=[i], output_path=AUC_output, AUC_data_output=AUC_data_output)
         
-        pipeline.plot_destruction_heatmap(time_windows=time_windows, x_label="Time Windows", AUC_data_output=AUC_data_output, output_path=plots_output)
+        pipeline.plot_destruction_heatmap(time_windows=time_windows, x_label="Time Windows", y_label=x_label, AUC_data_output=AUC_data_output, output_path=plots_output)
 
 def run_pipeline():
     state = {"filepath": "", "w_true": None, "W": None, "graphs": None}
@@ -152,7 +156,7 @@ def run_pipeline():
     pipeline = PipelineBuilder(state)
     
     #run_all(pipeline)
-    initial_path = "output/testando_completo"
+    initial_path = "output/sera_que3"
 
     run_scene(pipeline, 1, initial_path, D=11)
     pipeline.execute_pipeline()
