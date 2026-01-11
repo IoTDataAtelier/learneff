@@ -11,7 +11,7 @@ from scripts.components_AUC import graph_components_AUC, AUC_interpolation, AUC_
 # -----------------------
 
 #---- Experiment Plots ----
-from lib.functions import plot_graph_destruction_heatmap, plot_error_train_val, plot_weight_CDF, plot_AUC, save_data_npy
+from lib.functions import plot_graph_destruction_heatmap, plot_error_train_val, plot_weight_CDF, plot_AUC, plot_cluster_map, save_data_npy
 # -----------------------
 
 #---- Auxiliar Classes ---
@@ -131,6 +131,13 @@ class PipelineBuilder(BaseClass):
         step = (
             f"Store values from {name_state}",
             lambda: save_data_npy(x=self.state[name_state], output_path=output_path, filename=name_state)
+        )
+        self.pipeline.append(step)
+
+    def plot_clustermap(self, output_path:str, W_state="W", t:int = -1):
+        step = (
+            f"Generate clustermaps for the models weight's",
+            lambda: plot_cluster_map(W = self.state[W_state], output_path = output_path)
         )
         self.pipeline.append(step)
 

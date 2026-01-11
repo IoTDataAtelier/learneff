@@ -233,8 +233,20 @@ def plot_weight_CDF(G: list, output_path:str, time_windows: list):
         fig.savefig(fname)
         plt.close()
 
-def plot_cluster_map(W, t: int):
+def plot_cluster_map(W, output_path:str, t:int = -1):
+    fig, ax = plt.subplots(figsize=(8, 4))
     sns.clustermap(W)
+
+    title = "Hierarchically-Clustered Weights Heatmap"
+    fname = "clustermap"
+    if t != -1:
+        title = f"{title}, Time Window = {t}"
+        fname = f"{fname}_{t}"
+    
+    ax.set_title(title)
+    path = os.path.join(output_path, f"{fname}.pdf")
+    fig.savefig(path)
+    plt.close()
 
 def save_graph(G, output_path, start_epoch, last_epoch):
     fname = os.path.join(output_path, f"graph_{start_epoch}_{last_epoch}.gml")
