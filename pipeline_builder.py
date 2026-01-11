@@ -11,7 +11,7 @@ from scripts.components_AUC import graph_components_AUC, AUC_interpolation, AUC_
 # -----------------------
 
 #---- Experiment Plots ----
-from lib.functions import plot_graph_destruction_heatmap, plot_error_train_val, plot_weight_CDF, plot_AUC, plot_cluster_map, save_data_npy
+from lib.functions import plot_graph_destruction_heatmap, plot_error_train_val, plot_weight_CDF, plot_AUC, plot_cluster_map, extract_graph_weights_matrix, save_data_npy
 # -----------------------
 
 #---- Auxiliar Classes ---
@@ -134,10 +134,17 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def plot_clustermap(self, output_path:str, W_state="W", t:int = -1):
+    def plot_clustermap(self, output_path:str, W_matrix_state="graph_weights", t:int = -1):
         step = (
             f"Generate clustermaps for the models weight's",
-            lambda: plot_cluster_map(W = self.state[W_state], output_path = output_path)
+            lambda: plot_cluster_map(W = self.state[W_matrix_state], output_path = output_path, t = t)
+        )
+        self.pipeline.append(step)
+
+    def extract_graph_weights(self, i:int, graphs_state ="graphs"):
+        step = (
+            f"Extract the graph edge weights",
+            lambda: self.state.update(graph_weights = extract_graph_weights_matrix(G=self.state[graphs_state][i]))
         )
         self.pipeline.append(step)
 

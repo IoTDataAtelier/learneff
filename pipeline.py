@@ -64,6 +64,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         plots_output = f"{corr_output}/plots"
         AUC_output = f"{plots_output}/AUC"
         CDF_output = f"{plots_output}/CDF"
+        clustermap_output = f"{plots_output}/clustermap"
 
         os.makedirs(graphs_output, exist_ok=True)
         os.makedirs(AUC_output, exist_ok=True)
@@ -71,6 +72,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         os.makedirs(data_output, exist_ok=True)
         os.makedirs(destruction_output, exist_ok=True)
         os.makedirs(AUC_data_output, exist_ok=True)
+        os.makedirs(clustermap_output, exist_ok=True)
 
         if n == "cross_correlation":
             norm = MinMaxNorm()
@@ -83,6 +85,8 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         pipeline.plot_CDF(graphs_state=graphs_state, time_windows=time_windows, output_path=CDF_output)
         
         for i in range(0, len(time_windows)):
+            pipeline.extract_graph_weights(i = i, graphs_state=graphs_state)
+            pipeline.plot_clustermap(output_path=clustermap_output, t=time_windows[i])
             pipeline.graph_destruction(graphs_state=graphs_state, filter=filter, i=i, t=time_windows[i], x_state=x_state, y_state=y_state, output_path=destruction_output)
             
         pipeline.normalize_data(norm_f=MinMaxNorm(), norm_state=y_state, per_line=True)
@@ -120,6 +124,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         plots_output = f"{corr_output}/plots"
         AUC_output = f"{plots_output}/AUC"
         CDF_output = f"{plots_output}/CDF"
+        clustermap_output = f"{plots_output}/clustermap"
 
         os.makedirs(graphs_output, exist_ok=True)
         os.makedirs(AUC_output, exist_ok=True)
@@ -127,6 +132,7 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         os.makedirs(data_output, exist_ok=True)
         os.makedirs(destruction_output, exist_ok=True)
         os.makedirs(AUC_data_output, exist_ok=True)
+        os.makedirs(clustermap_output, exist_ok=True)
 
         if n == "cross_correlation":
             norm = MinMaxNorm()
@@ -150,12 +156,12 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         pipeline.plot_destruction_heatmap(time_windows=time_windows, x_label="Time Windows", y_label=x_label, AUC_data_output=AUC_data_output, output_path=plots_output)
 
 def run_pipeline():
-    state = {"filepath": "", "w_true": None, "W": None, "graphs": None}
+    state = {"filepath": "", "w_true": None, "W": None, "graphs": None, "graph_weights": None}
 
     pipeline = PipelineBuilder(state)
     
     #run_all(pipeline)
-    initial_path = "output/sera_que3"
+    initial_path = "output/test_clustermap"
 
     run_scene(pipeline, 1, initial_path, D=11)
     pipeline.execute_pipeline()
