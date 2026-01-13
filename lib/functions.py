@@ -234,8 +234,9 @@ def plot_weight_CDF(G: list, output_path:str, time_windows: list):
         plt.close()
 
 def plot_cluster_map(W, output_path:str, t:int = -1):
-    fig, ax = plt.subplots()
-    plot = sns.clustermap(W, figsize=(8, 8))
+    plot = sns.clustermap(W, row_cluster=False, cbar_pos=(0.05, .2, .03, .4), figsize=(10, 10), dendrogram_ratio=0.1)
+    ax = plot.ax_heatmap
+    fig = plot.figure
 
     title = "Hierarchically-Clustered Weights Heatmap"
     fname = "clustermap"
@@ -243,10 +244,15 @@ def plot_cluster_map(W, output_path:str, t:int = -1):
         title = f"{title}, Time Window = {t}"
         fname = f"{fname}_{t}"
     
-    ax.set_title(title)
+    hm = ax.get_position()
+    ax.set_position([hm.x0, hm.y0, hm.width, hm.height * 0.8])
+    col = plot.ax_col_dendrogram.get_position()
+    plot.ax_col_dendrogram.set_position([col.x0, col.y0 * 0.8, col.width, col.height])
+    #ax.set_title(title)
+    fig.suptitle(title)
     path = os.path.join(output_path, f"{fname}.pdf")
-    fig = plot.figure
     fig.savefig(path)
+    plt.close()
     
 
 def extract_graph_weights_matrix(G:nx.Graph):

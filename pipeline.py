@@ -144,6 +144,8 @@ def run_scene(pipeline: PipelineBuilder, scene: int, initial_path: str, D: int, 
         for i in range(0, len(time_windows)):
             pipeline.graph_generation(q=Pairwise(), corr=c, S_w=time_windows[i], M=M, graphs_state=graphs_state, output_path=graphs_output, norm_f=norm, once=True)
             pipeline.plot_CDF(graphs_state=graphs_state, time_windows=time_windows, output_path=CDF_output)
+            pipeline.extract_graph_weights(graphs_state=graphs_state)
+            pipeline.plot_clustermap(output_path=clustermap_output, t=time_windows[i])
             pipeline.graph_destruction(graphs_state=graphs_state, filter=filter, i=0, t=time_windows[i], x_state=x_state, y_state=y_state, output_path=destruction_output)
             
         pipeline.normalize_data(norm_f=MinMaxNorm(), norm_state=y_state, per_line=True)
@@ -165,17 +167,17 @@ def run_pipeline():
 
     run_scene(pipeline, 1, initial_path, D=11)
     pipeline.execute_pipeline()
-    pipeline.pipeline = []
+    # pipeline.pipeline = []
 
-    run_scene(pipeline, 2, initial_path, D=11, drop_w=0.5)
-    pipeline.execute_pipeline()
-    pipeline.pipeline = []
+    # run_scene(pipeline, 2, initial_path, D=11, drop_w=0.5)
+    # pipeline.execute_pipeline()
+    # pipeline.pipeline = []
 
-    run_scene(pipeline, 3, initial_path, D=21, drop_data=0.5)
-    pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100, output_path=initial_path, val=True, train=False, filename="val_errors")
-    pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100, output_path=initial_path, val=False, train=True, filename="train_errors")
-    pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100, output_path=initial_path, val=True, train=True, filename="errors")
-    pipeline.execute_pipeline()
+    # run_scene(pipeline, 3, initial_path, D=21, drop_data=0.5)
+    # pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100, output_path=initial_path, val=True, train=False, filename="val_errors")
+    # pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100, output_path=initial_path, val=False, train=True, filename="train_errors")
+    # pipeline.plot_train_val(partial_filepath=initial_path, scenes=[1, 2, 3], T=100, output_path=initial_path, val=True, train=True, filename="errors")
+    # pipeline.execute_pipeline()
 
 if __name__ == "__main__":
     run_pipeline()

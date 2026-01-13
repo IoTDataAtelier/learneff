@@ -141,11 +141,17 @@ class PipelineBuilder(BaseClass):
         )
         self.pipeline.append(step)
 
-    def extract_graph_weights(self, i:int, graphs_state ="graphs"):
-        step = (
-            f"Extract the graph edge weights",
-            lambda: self.state.update(graph_weights = extract_graph_weights_matrix(G=self.state[graphs_state][i]))
-        )
+    def extract_graph_weights(self, i:int = -1, graphs_state ="graphs"):
+        if i != -1:
+            step = (
+                f"Extract the graph edge weights for graph {i}",
+                lambda: self.state.update(graph_weights = extract_graph_weights_matrix(G=self.state[graphs_state][i]))
+            )
+        else:
+            step = (
+                f"Extract the graph edge weights",
+                lambda: self.state.update(graph_weights = extract_graph_weights_matrix(G=self.state[graphs_state][0]))
+            )
         self.pipeline.append(step)
 
     def execute_pipeline(self):
